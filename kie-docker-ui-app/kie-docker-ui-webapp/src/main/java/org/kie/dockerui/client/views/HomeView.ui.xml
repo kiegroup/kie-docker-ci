@@ -1,0 +1,113 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:c="urn:import:com.google.gwt.user.cellview.client"
+             xmlns:w="urn:import:org.kie.dockerui.client.widgets"
+    >
+
+  <ui:with field="i18n" type="org.kie.dockerui.client.resources.i18n.Constants"/>
+
+  <ui:style type="org.kie.dockerui.client.views.HomeView.HomeViewStyle">
+    .mainPanel {
+
+    }
+    .loadingPanel {
+
+    }
+    .summaryPanel {
+      width: 100%;
+    }
+    .calendar {
+      margin-left: 20px;
+    }
+    .calendarMainPanel {
+      width: 100%;
+    }
+    .title {
+      text-align: center;
+    }
+    .totals {
+      font-weight: bold;
+      text-align: center;
+    }
+    .totalsPanel {
+      width: 100%;
+    }
+    .totalsContainerPanel {
+      margin-left: 10px;
+    }
+  </ui:style>
+  
+  <g:FlowPanel addStyleNames="{style.mainPanel} " ui:field="mainPanel" >
+
+    <!-- Loading panel. -->
+    <w:TimeoutPopupPanel ui:field="loadingPanel" autoHideEnabled="false" modal="true" glassEnabled="true" addStyleNames="{style.loadingPanel} ">
+      <g:HTML text="{i18n.loading}..."/>
+    </w:TimeoutPopupPanel>
+
+    <g:HorizontalPanel addStyleNames="{style.summaryPanel}">
+      <g:cell width="100%" horizontalAlignment="ALIGN_CENTER">
+
+        <g:HorizontalPanel>
+          <g:cell width="50%" horizontalAlignment="ALIGN_CENTER">
+            <!-- System summary. -->
+            <g:VerticalPanel>
+              <b:Heading size="3" text="{i18n.systemSummary}"/>
+              <g:HorizontalPanel addStyleNames="{style.totalsPanel}">
+                <g:cell width="50%" horizontalAlignment="ALIGN_RIGHT">
+                  <g:VerticalPanel>
+                    <b:Heading size="5" text="{i18n.imagesCount}"/>
+                    <b:WellForm addStyleNames="{style.totals}">
+                      <g:HTML ui:field="imagesCountText"/>
+                    </b:WellForm>
+                  </g:VerticalPanel>
+                </g:cell>
+                <g:cell width="50%" horizontalAlignment="ALIGN_LEFT">
+                  <g:VerticalPanel addStyleNames="{style.totalsContainerPanel}">
+                    <b:Heading size="5" text="{i18n.containersCount}"/>
+                    <b:WellForm addStyleNames="{style.totals}">
+                      <g:HTML ui:field="containersCountText"/>
+                    </b:WellForm>
+                  </g:VerticalPanel>
+                </g:cell>
+              </g:HorizontalPanel>
+            </g:VerticalPanel>
+          </g:cell>
+          <g:cell width="50%" horizontalAlignment="ALIGN_CENTER">
+            <!-- System summary. -->
+            <g:VerticalPanel>
+              <b:Heading size="3" text="{i18n.kieSummary}"/>
+              <g:HorizontalPanel addStyleNames="{style.totalsPanel}">
+                <g:cell width="50%" horizontalAlignment="ALIGN_RIGHT">
+                  <g:VerticalPanel>
+                    <b:Heading size="5" text="{i18n.imagesCount}"/>
+                    <b:WellForm addStyleNames="{style.totals}">
+                      <g:HTML ui:field="kieImagesCountText"/>
+                    </b:WellForm>
+                  </g:VerticalPanel>
+                </g:cell>
+                <g:cell width="50%" horizontalAlignment="ALIGN_LEFT">
+                  <g:VerticalPanel addStyleNames="{style.totalsContainerPanel}">
+                    <b:Heading size="5" text="{i18n.containersCount}"/>
+                    <b:WellForm addStyleNames="{style.totals}">
+                      <g:HTML ui:field="kieContainersCountText"/>
+                    </b:WellForm>
+                  </g:VerticalPanel>
+                </g:cell>
+              </g:HorizontalPanel>
+            </g:VerticalPanel>
+          </g:cell>
+        </g:HorizontalPanel>
+        
+      </g:cell>
+    </g:HorizontalPanel>
+
+    <g:VerticalPanel addStyleNames="{style.calendarMainPanel}">
+      <b:Heading size="3" text="{i18n.availableKieImages}"/>
+      <g:FlowPanel ui:field="calendarPanel"/>
+    </g:VerticalPanel>
+    
+  </g:FlowPanel>
+  
+</ui:UiBinder>

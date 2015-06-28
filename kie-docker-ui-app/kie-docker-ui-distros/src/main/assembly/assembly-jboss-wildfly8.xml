@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2012 JBoss Inc
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+
+  <id>wildfly8</id>
+  <formats>
+    <format>war</format>
+    <format>dir</format>
+  </formats>
+
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>${project.basedir}/src/main/assembly/wildfly8</directory>
+      <outputDirectory>.</outputDirectory>
+    </fileSet>
+  </fileSets>
+  <dependencySets>
+    <!-- Add ANT dependency excluded in WAR pom that runs on Hosted Mode -->
+    <dependencySet>
+      <includes>
+        <include>org.kie.docker:kie-docker-ui-webapp:war</include>
+      </includes>
+      <outputDirectory>.</outputDirectory>
+      <unpack>true</unpack>
+      <unpackOptions>
+        <excludes>
+
+          <!-- SDM related. -->
+          <exclude>**/*devmode.js</exclude>
+          
+          <!-- Jetty related. -->
+          <exclude>WEB-INF/jetty-web.xml</exclude>
+
+          <!-- GWT Client Related -->
+          <exclude>WEB-INF/lib/gwt-bootstrap-*.jar</exclude>
+          <exclude>WEB-INF/lib/gwt-user-*.jar</exclude>
+          <exclude>WEB-INF/lib/guava-gwt-*.jar</exclude>
+          <exclude>WEB-INF/lib/gwt-slf4j-*.jar</exclude>
+
+          <!-- General -->
+          <exclude>WEB-INF/lib/*-sources.jar</exclude>
+          <exclude>WEB-INF/lib/el-api-*.jar</exclude>
+          <exclude>WEB-INF/lib/jboss-el-api_*.jar</exclude>
+          <exclude>WEB-INF/lib/xml-apis-*.jar</exclude>
+
+          <!-- Jetty -->
+          <exclude>WEB-INF/lib/jetty-*.jar</exclude>
+          <exclude>WEB-INF/lib/mail-*.jar</exclude>
+          <exclude>WEB-INF/lib/geronimo-spec-jta-*.jar</exclude>
+          <exclude>WEB-INF/lib/servlet-api-*.jar</exclude>
+          <exclude>WEB-INF/lib/jboss-servlet-api_*.jar</exclude>
+          <exclude>WEB-INF/lib/jstl-*.jar</exclude>
+
+          <exclude>WEB-INF/lib/jcip-annotations-*.jar</exclude>
+          <exclude>WEB-INF/lib/cal10n-api-*.jar</exclude>
+          <exclude>WEB-INF/lib/jsr250-api-*.jar</exclude>
+          <exclude>WEB-INF/lib/weld-*.jar</exclude>
+          <exclude>WEB-INF/lib/cdi-api*.jar</exclude>
+          <!--<exclude>WEB-INF/lib/javax*.jar</exclude>-->
+          <exclude>WEB-INF/lib/jboss-interceptors-api_1-*.jar</exclude>
+          <exclude>WEB-INF/lib/resteasy*.jar</exclude>
+
+          <!-- EAP 6.1 alignement -->
+          <exclude>WEB-INF/lib/activation-*.jar</exclude>
+          <!-- <exclude>WEB-INF/lib/cdi-api*.jar</exclude> ALREADY EXCLUDED-->
+          <exclude>WEB-INF/lib/commons-collections-*.jar</exclude>
+          <!-- Exclude commons-lang-* as this is bundled with Wildfly, but don't exclude commons-lang3-* as this is not bundled with Wildfly -->
+          <exclude>WEB-INF/lib/commons-lang-*.jar</exclude>
+          <exclude>WEB-INF/lib/commons-codec-*.jar</exclude>
+          <exclude>WEB-INF/lib/commons-io-*.jar</exclude>
+          <exclude>WEB-INF/lib/jaxb-impl-*.jar</exclude>
+          <exclude>WEB-INF/lib/jaxb-xjc-*.jar</exclude>
+          <exclude>WEB-INF/lib/org.osgi.core-*.jar</exclude>
+          <exclude>WEB-INF/lib/h2-*.jar</exclude>
+          <exclude>WEB-INF/lib/jettison-*.jar</exclude>
+          <exclude>WEB-INF/lib/joda-time-*.jar</exclude>
+          <exclude>WEB-INF/lib/xalan-*.jar</exclude>
+          <exclude>WEB-INF/lib/xercesImpl-*.jar</exclude>
+          <exclude>WEB-INF/lib/httpcore_*.jar</exclude>
+          <exclude>WEB-INF/lib/validation-api-*.jar</exclude>
+
+          <!-- TODO: Remove?? -->
+          <!-- Logging -->
+          <!-- Remove legacy log systems + logback. All logging calls will be delegated to JBoss LogManager. -->
+          <exclude>WEB-INF/lib/log4j-*.jar</exclude>
+          <exclude>WEB-INF/log4j.xml</exclude>
+          <exclude>WEB-INF/lib/commons-logging-*.jar</exclude>
+          <exclude>WEB-INF/lib/logback-*.jar</exclude>
+          <exclude>WEB-INF/classes/logback.xml</exclude>
+          <!-- Following slf4j-* and jboss-log* jars are used directly from EAP installation.
+               Dependendency on them is defined in jboss-deployment-structure.xml -->
+          <exclude>WEB-INF/lib/slf4j-api-*.jar</exclude>
+          <exclude>WEB-INF/lib/slf4j-ext-*.jar</exclude>
+          <exclude>WEB-INF/lib/jcl-over-slf4j-*.jar</exclude>
+          <exclude>WEB-INF/lib/jboss-logging-*.jar</exclude>
+          <exclude>WEB-INF/lib/jboss-logmanager*.jar</exclude>
+
+        </excludes>
+      </unpackOptions>
+      <useStrictFiltering>false</useStrictFiltering>
+    </dependencySet>
+  </dependencySets>
+
+</assembly>

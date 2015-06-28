@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+
+  <!-- Docker backend service -->
+  <servlet>
+    <servlet-name>dockerServiceImpl</servlet-name>
+    <servlet-class>
+      org.kie.dockerui.backend.service.DockerServiceImpl
+    </servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>dockerServiceImpl</servlet-name>
+    <url-pattern>/org.kie.dockerui.DockerUI/dockerService</url-pattern>
+  </servlet-mapping>
+
+  <!-- Settings backend service -->
+  <servlet>
+    <servlet-name>settingsServiceImpl</servlet-name>
+    <servlet-class>
+      org.kie.dockerui.backend.service.SettingsServiceImpl
+    </servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>settingsServiceImpl</servlet-name>
+    <url-pattern>/org.kie.dockerui.DockerUI/settingsService</url-pattern>
+  </servlet-mapping>
+
+  <!-- Database backend service -->
+  <servlet>
+    <servlet-name>databaseService</servlet-name>
+    <servlet-class>
+      org.kie.dockerui.backend.service.DatabaseServiceImpl
+    </servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>databaseService</servlet-name>
+    <url-pattern>/org.kie.dockerui.DockerUI/databaseService</url-pattern>
+  </servlet-mapping>
+
+  <!-- Artifacts backend service -->
+  <servlet>
+    <servlet-name>artifactsService</servlet-name>
+    <servlet-class>org.kie.dockerui.backend.service.ArtifactsServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>artifactsService</servlet-name>
+    <url-pattern>/org.kie.dockerui.DockerUI/artifactsService</url-pattern>
+  </servlet-mapping>
+
+  <!-- Artifacts download servlet. -->
+  <servlet>
+    <servlet-name>KieArtifactsDownloadServlet</servlet-name>
+    <servlet-class>org.kie.dockerui.backend.servlet.KieArtifactsDownloadServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>KieArtifactsDownloadServlet</servlet-name>
+    <url-pattern>/org.kie.dockerui.DockerUI/download</url-pattern>
+  </servlet-mapping>
+  
+  <listener>
+    <listener-class>
+      org.kie.dockerui.backend.KieDockerContextListener
+    </listener-class>
+  </listener>
+  
+  <welcome-file-list>
+    <welcome-file>docker-ui.html</welcome-file>
+  </welcome-file-list>
+
+</web-app>

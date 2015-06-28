@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.4.0//EN"
+    "http://google-web-toolkit.googlecode.com/svn/tags/2.5.0/distro-source/core/src/gwt-module.dtd">
+<module>
+
+  <inherits name='com.google.gwt.user.User'/>
+  <inherits name='com.google.gwt.user.theme.standard.Standard'/>
+  <inherits name="com.google.gwt.http.HTTP" />
+  <inherits name="com.google.gwt.logging.Logging"/>
+  <inherits name="com.github.gwtbootstrap.Bootstrap" />
+
+  <inherits name='com.bradrydzewski.gwt.calendar.Calendar' />
+  <inherits name='com.bradrydzewski.gwt.calendar.theme.google.Google' />
+  <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
+  
+  <entry-point class='org.kie.dockerui.client.DockerUIEntryPoint'/>
+
+  <source path='client'/>
+  <source path='shared'/>
+
+</module>

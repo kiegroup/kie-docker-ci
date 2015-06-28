@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>kie-docker-ui-app</artifactId>
+    <groupId>org.kie.docker</groupId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>kie-docker-ui-webapp</artifactId>
+  <packaging>war</packaging>
+  <name>KIE - Docker UI Webapp</name>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>com.github.docker-java</groupId>
+      <artifactId>docker-java</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.allen-sauer.gwt.dnd</groupId>
+      <artifactId>gwt-dnd</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.bradrydzewski</groupId>
+      <artifactId>gwt-cal</artifactId>
+    </dependency>
+
+    <!-- Use same commons-io:commons-io artifact version as docker java client, if not, runtime exceptions appear. -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.gwtbootstrap</groupId>
+      <artifactId>gwt-bootstrap</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+  </dependencies>
+  
+  <build>
+
+    <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
+  
+    <resources>
+      <!-- Include src/main/java in order not to break the Eclipse GWT plug-in -->
+      <resource>
+        <directory>src/main/java</directory>
+      </resource>
+      <!-- Include module descriptors from src/main/resources in order not to break the Intellij GWT plug-in -->
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+    
+    <plugins>
+      
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <configuration>
+          <deploy>${project.build.directory}/gwt-symbols-deploy</deploy>
+          <localWorkers>4</localWorkers>
+          <logLevel>INFO</logLevel>
+          <!--<module>org.kie.dockerui.FastCompiledDockerUI</module>-->
+          <module>org.kie.dockerui.DockerUI</module>
+          <draftCompile>false</draftCompile>
+          <force>true</force>
+          <strict>true</strict>
+          <runTarget>docker-ui.html</runTarget>
+          <extraJvmArgs>-Xmx1024m -XX:CompileThreshold=7000 -XX:MaxPermSize=512M</extraJvmArgs>
+          <noServer>false</noServer>
+          <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
+          <disableCastChecking>true</disableCastChecking>
+          <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
+        </configuration>
+        <executions>
+          <execution>
+            <id>gwt-clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>gwt-compile</id>
+            <goals>
+              <goal>resources</goal>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+    </plugins>
+    
+  </build>
+
+</project>
