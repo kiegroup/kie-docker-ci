@@ -15,7 +15,10 @@ echo "Removing temporary built images..."
 docker images --no-trunc | grep none | awk '{print $3}' | xargs -r docker rmi -f
 
 # Remove all images from jboss-kie* repository older than a week.
+# TODO: Improve images deletion based on image timestamp.
 echo "Removing images that belongs to jboss-kie repository present for more than one week..."
+docker images --no-trunc | grep "jboss-kie" | grep "5 days" | awk '{print $3}' | xargs -r docker rmi -f
+docker images --no-trunc | grep "jboss-kie" | grep "6 days" | awk '{print $3}' | xargs -r docker rmi -f
 docker images --no-trunc | grep "jboss-kie" | grep "week" | awk '{print $3}' | xargs -r docker rmi -f
 
 echo "Removing all kie-docker-ui images..."
