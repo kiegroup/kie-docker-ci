@@ -19,6 +19,8 @@ docker images --no-trunc | grep none | awk '{print $3}' | xargs -r docker rmi -f
 echo "Removing images that belongs to jboss-kie repository present for more than one week..."
 docker images --no-trunc | grep "jboss-kie" | grep "5 days" | awk '{print $3}' | xargs -r docker rmi -f
 docker images --no-trunc | grep "jboss-kie" | grep "6 days" | awk '{print $3}' | xargs -r docker rmi -f
+docker images --no-trunc | grep "jboss-kie" | grep "7 days" | awk '{print $3}' | xargs -r docker rmi -f
+docker images --no-trunc | grep "jboss-kie" | grep "8 days" | awk '{print $3}' | xargs -r docker rmi -f
 docker images --no-trunc | grep "jboss-kie" | grep "week" | awk '{print $3}' | xargs -r docker rmi -f
 
 echo "Removing all kie-docker-ui images..."
