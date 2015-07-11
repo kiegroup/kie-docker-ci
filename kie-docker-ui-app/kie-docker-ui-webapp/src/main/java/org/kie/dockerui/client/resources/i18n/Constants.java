@@ -160,5 +160,9 @@ public interface Constants extends ConstantsWithLookup {
     String artifactVersion();
     String artifactType();
     String artifactClassifier();
-    
+    String artifactsViewHeader();
+    String searchArtifacts();
+    String searchFileName();
+    String search();
+    String cleanSearch();
 }

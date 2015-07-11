@@ -16,7 +16,9 @@
     .loadingPanel {
 
     }
-
+    .searchPanel {
+      width: 300px;
+    }
     .artifactsPanel {
 
     }
@@ -32,8 +34,17 @@
       <g:HTML text="{i18n.loading}..."/>
     </w:TimeoutPopupPanel>
 
-    <b:Label type="WARNING" text="UNDER CONSTRUCTION"/>
-    
+    <b:Heading size="3" text="{i18n.artifactsViewHeader}"/>
+        
+    <b:Well>
+      <b:Heading size="5" text="{i18n.searchArtifacts}:"/>
+      <g:HorizontalPanel addStyleNames="{style.searchPanel}">
+        <b:TextBox ui:field="searchBox" placeholder="{i18n.searchFileName}"/>
+        <b:Button ui:field="searchButton" icon="SEARCH" title="{i18n.search}"/>
+        <b:Button ui:field="cleanSearchButton" icon="REMOVE" title="{i18n.cleanSearch}" visible="false"/>
+      </g:HorizontalPanel>
+    </b:Well>
+
     <g:VerticalPanel>
 
       <!-- Images grid. -->

@@ -3,6 +3,7 @@ package org.kie.dockerui.client.util;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeUri;
 import org.kie.dockerui.backend.servlet.KieArtifactsDownloadServlet;
 import org.kie.dockerui.client.resources.bundles.Images;
@@ -196,22 +197,22 @@ public class ClientUtils {
         return new Date(date.getTime () - ( (days - 1) * MILLISECONDS_IN_DAY));
     }
     
-    public static IconType getStatusIcon(final KieAppStatus status) {
-        IconType iconType = IconType.MINUS;
+    public static ImageResource getStatusImage(final KieAppStatus status) {
+        ImageResource imageResource = Images.INSTANCE.circleRedIcon();
         if (status != null) {
             switch (status) {
                 case OK:
-                    iconType = IconType.CHECK;
+                    imageResource = Images.INSTANCE.circleGreenIcon();
                     break;
                 case NOT_STARTING_UP:
-                    iconType = IconType.REMOVE;
+                    imageResource = Images.INSTANCE.circleRedIcon();
                     break;
                 case NOT_EVALUATED:
-                    iconType = IconType.QUESTION_SIGN;
+                    imageResource = Images.INSTANCE.circleGreyIcon();
                     break;
             }
         }
-        return iconType;
+        return imageResource;
     }
 
     public static String getStatusText(final KieAppStatus status) {

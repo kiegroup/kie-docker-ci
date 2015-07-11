@@ -21,6 +21,8 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
@@ -38,6 +40,7 @@ import org.kie.dockerui.client.service.DockerService;
 import org.kie.dockerui.client.service.DockerServiceAsync;
 import org.kie.dockerui.client.service.SettingsClientHolder;
 import org.kie.dockerui.client.util.ClientUtils;
+import org.kie.dockerui.client.widgets.ClickableImageResourceCell;
 import org.kie.dockerui.client.widgets.ImageTypesCell;
 import org.kie.dockerui.client.widgets.KieCalendar;
 import org.kie.dockerui.client.widgets.TimeoutPopupPanel;
@@ -271,6 +274,22 @@ public class ImagesView extends Composite {
 
     private void initTableColumns(SelectionModel<KieImage> selectionModel, ColumnSortEvent.ListHandler<KieImage> sortHandler) {
 
+        // Image status.
+        final ClickableImageResourceCell statusCell = new ClickableImageResourceCell();
+        final Column<KieImage, ImageResource> statusColumn = new Column<KieImage, ImageResource>(statusCell) {
+
+            @Override
+            public ImageResource getValue(final KieImage image) {
+                final KieAppStatus status = image.getAppStatus();
+                final ImageResource imageResource = ClientUtils.getStatusImage(status);
+                final String iconTooltip = ClientUtils.getStatusText(status);
+                statusCell.setTooltip(new SafeHtmlBuilder().appendEscaped(iconTooltip).toSafeHtml().asString());
+                return imageResource;
+            }
+        };
+        imagesGrid.addColumn(statusColumn, Constants.INSTANCE.containerStatus());
+        imagesGrid.setColumnWidth(statusColumn, 2, Style.Unit.PCT);
+
         // Image id.
         final Column<KieImage, String> idColumn = new Column<KieImage, String>(
                 new EditTextCell()) {
@@ -288,24 +307,6 @@ public class ImagesView extends Composite {
         });
         imagesGrid.addColumn(idColumn, Constants.INSTANCE.imageId());
         imagesGrid.setColumnWidth(idColumn, 5, Style.Unit.PCT);
-
-        // Image status.
-        final IconCell statusIconCell = new IconCell(IconType.OK_CIRCLE);
-        statusIconCell.setIconSize(IconSize.LARGE);
-        final Column<KieImage, Void> statusColumn = new Column<KieImage, Void>(statusIconCell) {
-
-            @Override
-            public Void getValue(final KieImage image) {
-                final KieAppStatus status = image.getAppStatus();
-                final IconType iconType = ClientUtils.getStatusIcon(status);
-                final String iconTooltip = ClientUtils.getStatusText(status);
-                statusIconCell.setIconType(iconType);
-                statusIconCell.setTooltip(iconTooltip);
-                return null;
-            }
-        };
-        imagesGrid.addColumn(statusColumn, Constants.INSTANCE.containerStatus());
-        imagesGrid.setColumnWidth(statusColumn, 2, Style.Unit.PCT);
         
         // Image type cells.
         final Column<KieImage, KieImage> typeColumn = new Column<KieImage, KieImage>(new ImageTypesCell()) {

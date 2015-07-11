@@ -6,11 +6,8 @@ public class KieArtifact implements IsSerializable {
     
     private String absoluteFilePath;
     private String fileName;
+    private String extension;
     private String timestamp;
-    private String artifactId;
-    private String version;
-    private String type;
-    private String classifier;
 
     public KieArtifact() {
     }
@@ -19,14 +16,11 @@ public class KieArtifact implements IsSerializable {
         this.absoluteFilePath = absoluteFilePath;
     }
 
-    public KieArtifact(String absoluteFilePath, String timestamp, String fileName, String artifactId, String version, String type, String classifier) {
+    public KieArtifact(String absoluteFilePath, String timestamp, String fileName, String extension) {
         this.absoluteFilePath = absoluteFilePath;
         this.fileName = fileName;
         this.timestamp = timestamp;
-        this.artifactId = artifactId;
-        this.version = version;
-        this.type = type;
-        this.classifier = classifier;
+        this.extension = extension;
     }
 
     public String getAbsoluteFilePath() {
@@ -41,28 +35,14 @@ public class KieArtifact implements IsSerializable {
         return timestamp;
     }
 
-    public String getArtifactId() {
-        return artifactId;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getClassifier() {
-        return classifier;
+    public String getExtension() {
+        return extension;
     }
 
     @Override
     public String toString() {
         return new StringBuilder("**KieArtifact**  ")
-                .append(absoluteFilePath).append(" / ").append(fileName).append(" / ").append(timestamp)
-                .append(" / ").append(artifactId).append(" / ").append(version).append(" / ")
-                .append(type).append(" / ").append(classifier).toString();
+                .append(absoluteFilePath).append(" / ").append(fileName).append(" / ").append(timestamp).toString();
     }
 
     @Override

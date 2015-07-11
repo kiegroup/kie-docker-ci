@@ -23,6 +23,7 @@ import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.ImageCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -31,6 +32,8 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
@@ -201,27 +204,25 @@ public class KieContainersExplorer extends Composite {
     private void initTableColumns(
             final SelectionModel<KieContainer> selectionModel,
             ColumnSortEvent.ListHandler<KieContainer> sortHandler) {
-
+       
         // Container status.
-        final ButtonWithTitleCell statusCell = new ButtonWithTitleCell(IconType.OK_CIRCLE);
-        statusCell.setSize(ButtonSize.SMALL);
-        final Column<KieContainer, String> statusColumn = new Column<KieContainer, String>(statusCell) {
+        final ClickableImageResourceCell statusCell = new ClickableImageResourceCell();
+        final Column<KieContainer, ImageResource> statusColumn = new Column<KieContainer, ImageResource>(statusCell) {
 
             @Override
-            public String getValue(final KieContainer container) {
+            public ImageResource getValue(final KieContainer container) {
                 final KieAppStatus status = container.getAppStatus();
-                final IconType iconType = ClientUtils.getStatusIcon(status);
+                final ImageResource imageResource = ClientUtils.getStatusImage(status);
                 final StringBuilder iconTooltip = new StringBuilder(ClientUtils.getStatusText(status));
                 iconTooltip.append(" (").append(Constants.INSTANCE.clickForUpdate()).append(")");
-                statusCell.setIcon(iconType);
-                statusCell.setTitle(iconTooltip.toString());
-                return "";
+                statusCell.setTooltip(new SafeHtmlBuilder().appendEscaped(iconTooltip.toString()).toSafeHtml().asString());
+                return imageResource;
             }
         };
-        // TODO: Not firing
-        statusColumn.setFieldUpdater(new FieldUpdater<KieContainer, String>() {
+
+        statusColumn.setFieldUpdater(new FieldUpdater<KieContainer, ImageResource>() {
             @Override
-            public void update(int index, KieContainer object, String value) {
+            public void update(int index, KieContainer object, ImageResource value) {
                 updateStatus(object);
             }
         });

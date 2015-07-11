@@ -11,16 +11,9 @@ public class KieArtifactBuilder {
         if (isEmpty(filePath)) return null;
         Path path = Paths.get(filePath);
         final String fileName = path.getFileName().toString();
+        final String[] extension = getFileExtension(fileName);
         final String timestamp = path.getParent().getFileName().toString();
-        String[] coords = parseMavenCoordinates(fileName);
-        if (coords != null) {
-            return new KieArtifact(filePath, nullSafe(timestamp), nullSafe(fileName), nullSafe(coords[0]), nullSafe(coords[1]), nullSafe(coords[2]), nullSafe(coords[3]));
-        }
-        return new KieArtifact(filePath, "", "", "", "", "", "");
-    }
-    
-    private static String nullSafe(final String s) {
-        return s != null ? s : "";
+        return new KieArtifact(filePath, timestamp, extension[0], extension[1]);
     }
     
     private static String[] getFileExtension(final String f) {
@@ -31,30 +24,6 @@ public class KieArtifactBuilder {
             if (lastDot > 0) return new String[] { name, ext  };
         }
         return null;
-    }
-    
-    private static String[] parseMavenCoordinates(final String fileName) {
-        if (isEmpty(fileName)) return null;
-        
-        String artifactId = null;
-        String version = null;
-        String type = null;
-        String classifer = null;
-
-        final String[] _ne = getFileExtension(fileName);
-        if (_ne == null) return null;
-
-        final String name = _ne[0];
-        type = _ne[1];
-        final int lastDash = fileName.lastIndexOf("-");
-        if (lastDash > 0) {
-            artifactId = fileName.substring(0, lastDash);
-            version = fileName.substring(lastDash + 1, fileName.length());
-        } else {
-            artifactId = name;
-        }
-        
-        return new String[] {artifactId, version, type, classifer};
     }
     
     private static boolean isEmpty(final String s) {
