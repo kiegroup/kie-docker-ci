@@ -135,7 +135,7 @@ sudo service docker restart
 
 # Run the Maven build.
 echo "Performing build for all KIE applications using arguments: '$KIE_MAVEN_ARGUMENTS $KIE_ARGUMENTS'..."
-cd $KIE_HOME/ && $MVN_HOME/bin/mvn clean install $KIE_MAVEN_ARGUMENTS $KIE_ARGUMENTS
+cd $KIE_HOME/ && $MAVEN_HOME/bin/mvn clean install $KIE_MAVEN_ARGUMENTS $KIE_ARGUMENTS
 echo "Build finished!"
 
 # Working directory and exit status.
