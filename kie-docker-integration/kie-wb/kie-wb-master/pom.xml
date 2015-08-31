@@ -15,14 +15,14 @@
 
   <properties>
     <kie.docker.kie-wb.wildfly8.artifactId>kie-wb-distribution-wars</kie.docker.kie-wb.wildfly8.artifactId>
-    <kie.docker.kie-wb.eap64.artifactId>kie-wb-distribution-wars-cdi1.0</kie.docker.kie-wb.eap64.artifactId>
-    <kie.docker.kie-wb.tomcat7.artifactId>kie-wb-distribution-wars-cdi1.0</kie.docker.kie-wb.tomcat7.artifactId>
+    <kie.docker.kie-wb.eap64.artifactId>kie-wb-distribution-wars</kie.docker.kie-wb.eap64.artifactId>
+    <kie.docker.kie-wb.tomcat7.artifactId>kie-wb-distribution-wars</kie.docker.kie-wb.tomcat7.artifactId>
     <kie.docker.kie-wb-base.path>${project.build.directory}/docker-base</kie.docker.kie-wb-base.path>
     <kie.docker.kie-wb.wildfly8.repositoryPath>${org.kie:kie-wb-distribution-wars:war:wildfly8}</kie.docker.kie-wb.wildfly8.repositoryPath>
     <kie.docker.jbpm-dashbuilder.wildfly8.repositoryPath>${org.jbpm.dashboard:jbpm-dashboard-distributions:war:wildfly8}</kie.docker.jbpm-dashbuilder.wildfly8.repositoryPath>
-    <kie.docker.kie-wb.eap64.repositoryPath>${org.kie:kie-wb-distribution-wars-cdi1.0:war:eap6_4}</kie.docker.kie-wb.eap64.repositoryPath>
+    <kie.docker.kie-wb.eap64.repositoryPath>${org.kie:kie-wb-distribution-wars:war:eap6_4}</kie.docker.kie-wb.eap64.repositoryPath>
     <kie.docker.jbpm-dashbuilder.eap64.repositoryPath>${org.jbpm.dashboard:jbpm-dashboard-distributions:war:eap6_4}</kie.docker.jbpm-dashbuilder.eap64.repositoryPath>
-    <kie.docker.kie-wb.tomcat7.repositoryPath>${org.kie:kie-wb-distribution-wars-cdi1.0:war:tomcat7}</kie.docker.kie-wb.tomcat7.repositoryPath>
+    <kie.docker.kie-wb.tomcat7.repositoryPath>${org.kie:kie-wb-distribution-wars:war:tomcat7}</kie.docker.kie-wb.tomcat7.repositoryPath>
     <kie.docker.jbpm-dashbuilder.tomcat7.repositoryPath>${org.jbpm.dashboard:jbpm-dashboard-distributions:war:tomcat7}</kie.docker.jbpm-dashbuilder.tomcat7.repositoryPath>
   </properties>
 

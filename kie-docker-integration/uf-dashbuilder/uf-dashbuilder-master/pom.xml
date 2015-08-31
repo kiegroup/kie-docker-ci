@@ -15,11 +15,11 @@
 
   <properties>
     <kie.docker.uf-dashbuilder.wildfly8.artifactId>dashbuilder-distros</kie.docker.uf-dashbuilder.wildfly8.artifactId>
-    <kie.docker.uf-dashbuilder.eap64.artifactId>dashbuilder-distros-cdi1.0</kie.docker.uf-dashbuilder.eap64.artifactId>
+    <kie.docker.uf-dashbuilder.eap64.artifactId>dashbuilder-distros</kie.docker.uf-dashbuilder.eap64.artifactId>
     <kie.docker.uf-dashbuilder.tomcat7.artifactId>dashbuilder-distros</kie.docker.uf-dashbuilder.tomcat7.artifactId>
     <kie.docker.uf-dashbuilder-base.path>${project.build.directory}/docker-base</kie.docker.uf-dashbuilder-base.path>
     <kie.docker.uf-dashbuilder.wildfly8.repositoryPath>${org.dashbuilder:dashbuilder-distros:war:wildfly8}</kie.docker.uf-dashbuilder.wildfly8.repositoryPath>
-    <kie.docker.uf-dashbuilder.eap64.repositoryPath>${org.dashbuilder:dashbuilder-distros-cdi1.0:war:eap6_4}</kie.docker.uf-dashbuilder.eap64.repositoryPath>
+    <kie.docker.uf-dashbuilder.eap64.repositoryPath>${org.dashbuilder:dashbuilder-distros:war:eap6_4}</kie.docker.uf-dashbuilder.eap64.repositoryPath>
     <kie.docker.uf-dashbuilder.tomcat7.repositoryPath>${org.dashbuilder:dashbuilder-distros:war:tomcat7}</kie.docker.uf-dashbuilder.tomcat7.repositoryPath>
   </properties>
 

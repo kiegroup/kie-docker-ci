@@ -15,12 +15,12 @@
 
   <properties>
     <kie.docker.drools-wb.wildfly8.artifactId>kie-drools-wb-distribution-wars</kie.docker.drools-wb.wildfly8.artifactId>
-    <kie.docker.drools-wb.eap64.artifactId>kie-drools-wb-distribution-wars-cdi1.0</kie.docker.drools-wb.eap64.artifactId>
-    <kie.docker.drools-wb.tomcat7.artifactId>kie-drools-wb-distribution-wars-cdi1.0</kie.docker.drools-wb.tomcat7.artifactId>
+    <kie.docker.drools-wb.eap64.artifactId>kie-drools-wb-distribution-wars</kie.docker.drools-wb.eap64.artifactId>
+    <kie.docker.drools-wb.tomcat7.artifactId>kie-drools-wb-distribution-wars</kie.docker.drools-wb.tomcat7.artifactId>
     <kie.docker.drools-wb-base.path>${project.build.directory}/docker-base</kie.docker.drools-wb-base.path>
     <kie.docker.drools-wb.wildfly8.repositoryPath>${org.kie:kie-drools-wb-distribution-wars:war:wildfly8}</kie.docker.drools-wb.wildfly8.repositoryPath>
-    <kie.docker.drools-wb.eap64.repositoryPath>${org.kie:kie-drools-wb-distribution-wars-cdi1.0:war:eap6_4}</kie.docker.drools-wb.eap64.repositoryPath>
-    <kie.docker.drools-wb.tomcat7.repositoryPath>${org.kie:kie-drools-wb-distribution-wars-cdi1.0:war:tomcat7}</kie.docker.drools-wb.tomcat7.repositoryPath>
+    <kie.docker.drools-wb.eap64.repositoryPath>${org.kie:kie-drools-wb-distribution-wars:war:eap6_4}</kie.docker.drools-wb.eap64.repositoryPath>
+    <kie.docker.drools-wb.tomcat7.repositoryPath>${org.kie:kie-drools-wb-distribution-wars:war:tomcat7}</kie.docker.drools-wb.tomcat7.repositoryPath>
   </properties>
 
 
