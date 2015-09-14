@@ -24,9 +24,6 @@
 
 KIE_HOME=../
 KIE_SETTINGS_PATH=$MAVEN_HOME/conf/settings.xml
-KIE_MASTER_VERSION=6.3.0-SNAPSHOT
-KIE_PRODUCT_VERSION=6.2.1-SNAPSHOT
-DASH_MASTER_VERSION=0.3.0-SNAPSHOT
 KIE_PROFILE=all
 KIE_DOCKER_UI_APP_BUILD=no
 KIE_HOST_PRIVATE=
@@ -36,7 +33,7 @@ KIE_JENKINS_URL=
                   
 function usage
 {
-    echo "usage: build_all.sh -s <settings_path> -mv <master_branch_version> -pv <product_branch_version>  -ui-app <no|yes> -p <maven_profile> -hpriv <docker_host_private> -hpub <docker_host_public> -a <kie_artifacts_path> -j <jenkins_url>"
+    echo "usage: build_all.sh -s <settings_path> -ui-app <no|yes> -p <maven_profile> -hpriv <docker_host_private> -hpub <docker_host_public> -a <kie_artifacts_path> -j <jenkins_url>"
 }
 
 while [ "$1" != "" ]; do
@@ -46,15 +43,6 @@ while [ "$1" != "" ]; do
                                 ;;
         -s | --settings)        shift
                                 KIE_SETTINGS_PATH=$1
-                                ;;
-        -kmv | --kie-master-version) shift
-                                KIE_MASTER_VERSION=$1
-                                ;;
-        -kpv | --kie-product-version) shift
-                                KIE_PRODUCT_VERSION=$1
-                                ;;
-        -dpv | --dash-product-version) shift
-                                DASH_MASTER_VERSION=$1
                                 ;;
         -p | --profile )        shift
                                 KIE_PROFILE=$1

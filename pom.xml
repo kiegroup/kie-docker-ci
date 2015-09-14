@@ -2,11 +2,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>16</version>
+  </parent>
+
   <groupId>org.kie.docker</groupId>
   <artifactId>kie-docker-ci</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>KIE - Docker Continuous Integration</name>
+  <name>KIE :: Docker Continuous Integration</name>
 
   <!-- Bootstrap repository to locate the parent pom when the parent pom has not been build locally. -->
   <repositories>
@@ -26,38 +32,32 @@
     </repository>
   </repositories>
 
-  <profiles>
+  <modules>
+    <module>kie-docker-ui-app</module>
+    <module>kie-docker-ui-docker-image</module>
+  </modules>
 
-    <!-- Default profile - Only run the KIE application continuous integration build. Skip KIE Docker UI web application build from scratch-->
-    <profile>
-      <id>kie-docker-ci-only</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-        <property>
-          <name>kie-docker-ci-only</name>
-        </property>
-      </activation>
-      <modules>
-        <module>kie-docker-integration</module>
-      </modules>
-    </profile>
-    
-    <!-- Profile that includes building the KIE Docker UI. -->
-    <!-- KIE Docker UI it's not build by default as it's not intended to be tested by the integration system, 
-    it's just a web applciation for managing all KIE and Docker stuff. -->
-    <profile>
-      <id>kie-docker-ci-all</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-        <property>
-          <name>kie-docker-ci-all</name>
-        </property>
-      </activation>
-      <modules>
-        <module>kie-docker-ui-app</module>
-        <module>kie-docker-integration</module>
-      </modules>
-    </profile>
-  </profiles>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.kie.docker</groupId>
+        <artifactId>kie-docker-ui-distros</artifactId>
+        <version>${project.version}</version>
+        <type>war</type>
+        <classifier>tomcat7</classifier>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.jolokia</groupId>
+          <artifactId>docker-maven-plugin</artifactId>
+          <version>0.13.3</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
