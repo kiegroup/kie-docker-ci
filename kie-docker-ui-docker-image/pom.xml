@@ -27,6 +27,7 @@
     <docker.registry>localhost:5000</docker.registry>
     <docker.kie.ui.version>1.0.0-SNAPSHOT</docker.kie.ui.version>
     <kie.artifacts.deploy.path>/tmp</kie.artifacts.deploy.path>
+    <docker.run.timeout>60000</docker.run.timeout>
   </properties>
 
   <dependencies>
@@ -94,7 +95,7 @@
                 </volumes>
                 <wait>
                   <log>Deployment of web application directory /usr/local/tomcat/webapps/kie-docker-ui-webapp has finished</log>
-                  <time>30000</time>
+                  <time>${docker.run.tiemout}</time>
                 </wait>
                 <log>
                   <prefix>DEMO</prefix>
