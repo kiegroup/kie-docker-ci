@@ -20,8 +20,3 @@ if [[ ! -z "$KIE_ARTIFACTS_PATH" ]] ; then
     echo "Cleaning previous deployed artifacts at path '$KIE_ARTIFACTS_PATH'.."
     rm -rf $KIE_ARTIFACTS_PATH/*
 fi
-
-# Exit with last docker rmi command status
-exit $?
-
-
