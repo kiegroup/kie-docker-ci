@@ -15,7 +15,7 @@ echo "Removing temporary built images..."
 docker images --no-trunc | grep none | awk '{print $3}' | xargs -r docker rmi -f
 
 # Remove all images from jboss-kie* repository
-echo "Removing images that belongs to jboss-kie repository present for more than one week..."
+echo "Removing images that belongs to jboss-kie repository"
 docker images --no-trunc | grep "jboss-kie" | awk '{print $3}' | xargs -r docker rmi -f
 
 echo "Removing all kie-docker-ui images..."

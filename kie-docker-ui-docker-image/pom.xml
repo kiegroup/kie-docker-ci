@@ -95,7 +95,7 @@
                 </volumes>
                 <wait>
                   <log>Deployment of web application directory /usr/local/tomcat/webapps/kie-docker-ui-webapp has finished</log>
-                  <time>${docker.run.tiemout}</time>
+                  <time>${docker.run.timeout}</time>
                 </wait>
                 <log>
                   <prefix>DEMO</prefix>
