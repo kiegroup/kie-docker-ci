@@ -1,4 +1,4 @@
-package org.kie.dockerui.backend.service.util;
+package org.kie.dockerui.backend.service.builder;
 
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.Image;

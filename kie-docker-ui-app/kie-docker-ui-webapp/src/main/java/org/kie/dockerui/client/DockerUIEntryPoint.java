@@ -1,7 +1,6 @@
 package org.kie.dockerui.client;
 
 import com.github.gwtbootstrap.client.ui.Image;
-import com.github.gwtbootstrap.client.ui.PageHeader;
 import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.github.gwtbootstrap.client.ui.constants.Placement;
 import com.google.gwt.animation.client.Animation;
@@ -11,6 +10,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -31,6 +31,9 @@ import org.kie.dockerui.shared.settings.Settings;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * NOTE: Home has been disabled. Used containers view as home.
+ */
 public class DockerUIEntryPoint implements EntryPoint {
 
     private HomeView homeView = null;
@@ -79,8 +82,8 @@ public class DockerUIEntryPoint implements EntryPoint {
                         RootPanel.get().add(mainPanel);
 
                         
-                        // By default, show home view.
-                        showHomeView();
+                        // By default, show containers view.
+                        showContainersView();
                         hideLoadingPopup();
                     }
                 });
@@ -98,8 +101,8 @@ public class DockerUIEntryPoint implements EntryPoint {
     };
     
     private Panel createView() {
-        homeView = new HomeView();
-        homeView.addShowImageEventHandler(homeViewShowImageHandler);
+        /*homeView = new HomeView();
+        homeView.addShowImageEventHandler(homeViewShowImageHandler);*/
         imagesView = new ImagesView();
         imagesView.addShowContainersEventHandler(showContainersEventHandler);
         containersView = new ContainersView();
@@ -113,15 +116,19 @@ public class DockerUIEntryPoint implements EntryPoint {
         setWidthAt100pct(titlePanel.getElement());
         final com.github.gwtbootstrap.client.ui.Image jenkinsLogo = new Image(Images.INSTANCE.jenkins().getSafeUri());
         jenkinsLogo.getElement().getStyle().setMarginTop(10, Style.Unit.PX);
+        jenkinsLogo.getElement().getStyle().setMarginBottom(10, Style.Unit.PX);
         jenkinsLogo.getElement().getStyle().setMarginLeft(20, Style.Unit.PX);
         jenkinsLogo.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+        jenkinsLogo.setSize("20px", "30px");
         jenkinsLogo.addClickHandler(goToJenkinsClickHandler);
         final Tooltip jenkinsTooltip = new Tooltip(Constants.INSTANCE.goToJenkins());
         jenkinsTooltip.setPlacement(Placement.BOTTOM);
         jenkinsTooltip.setWidget(jenkinsLogo);
-        jenkinsLogo.setSize("50px", "80px");
-        final PageHeader header = new PageHeader();
-        header.setText(Constants.INSTANCE.dockerContinuousIntegration());
+        final HTML header = new HTML();
+        header.setHTML(new SafeHtmlBuilder().appendEscaped(Constants.INSTANCE.dockerContinuousIntegration()).toSafeHtml().asString());
+        header.getElement().getStyle().setMarginTop(10, Style.Unit.PX);
+        header.getElement().getStyle().setFontSize(30, Style.Unit.PX);
+        header.getElement().getStyle().setFontWeight(Style.FontWeight.BOLD);
         final HorizontalPanel jenkinsPanel = new HorizontalPanel();
         jenkinsPanel.setWidth("20%");
         jenkinsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
@@ -137,22 +144,23 @@ public class DockerUIEntryPoint implements EntryPoint {
         
         // Top Menu.
         final MenuBar topMenu = new MenuBar(false);
-        topMenu.addItem(Constants.INSTANCE.home(), new Command() {
+        topMenu.setAnimationEnabled(true);
+        /*topMenu.addItem(Constants.INSTANCE.home(), new Command() {
             @Override
             public void execute() {
                 showHomeView();
+            }
+        });*/
+        topMenu.addItem(Constants.INSTANCE.containers(), new Command() {
+            @Override
+            public void execute() {
+                showContainersView();
             }
         });
         topMenu.addItem(Constants.INSTANCE.images(), new Command() {
             @Override
             public void execute() {
                 showImagesView();
-            }
-        });
-        topMenu.addItem(Constants.INSTANCE.containers(), new Command() {
-            @Override
-            public void execute() {
-                showContainersView();
             }
         });
         if (!isEmpty(SettingsClientHolder.getInstance().getSettings().getArtifactsPath())) {
@@ -171,7 +179,7 @@ public class DockerUIEntryPoint implements EntryPoint {
         widgetsPanel.getElement().getStyle().setMarginLeft(20, Style.Unit.PX);
         widgetsPanel.getElement().getStyle().setMarginRight(20, Style.Unit.PX);
         setWidthAt100pct(widgetsPanel.getElement());
-        widgetsPanel.add(homeView);
+        // widgetsPanel.add(homeView);
         widgetsPanel.add(imagesView);
         widgetsPanel.add(containersView);
         widgetsPanel.add(artifactsView);
@@ -220,7 +228,7 @@ public class DockerUIEntryPoint implements EntryPoint {
 
     private void hideViews() {
         imagesView.setVisible(false);
-        homeView.setVisible(false);
+        // homeView.setVisible(false);
         containersView.setVisible(false);
         artifactsView.setVisible(false);
     }

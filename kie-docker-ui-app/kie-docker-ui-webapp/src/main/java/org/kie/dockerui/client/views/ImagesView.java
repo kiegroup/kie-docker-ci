@@ -4,9 +4,6 @@ import com.bradrydzewski.gwt.calendar.client.Appointment;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ButtonCell;
 import com.github.gwtbootstrap.client.ui.CellTable;
-import com.github.gwtbootstrap.client.ui.IconCell;
-import com.github.gwtbootstrap.client.ui.constants.IconSize;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
@@ -20,7 +17,6 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -61,21 +57,6 @@ public class ImagesView extends Composite {
     interface ImagesViewBinder extends UiBinder<Widget, ImagesView> {}
     private static ImagesViewBinder uiBinder = GWT.create(ImagesViewBinder.class);
 
-    interface ImagesViewStyle extends CssResource {
-        String mainPanel();
-        String imagesPanel();
-        String imagesList();
-        String loadingPanel();
-        String calendarPanel();
-        String calendar();
-        String refreshButton();
-        String calendarButton();
-        String headerPanel();
-    }
-
-    @UiField
-    ImagesViewStyle style;
-    
     @UiField
     FlowPanel mainPanel;
     
@@ -92,6 +73,12 @@ public class ImagesView extends Composite {
     HTML pullText;
     
     @UiField
+    Button allImagesButton;
+
+    @UiField
+    Button calendarButton;
+    
+    @UiField
     HTMLPanel imagesPanel;
 
     @UiField(provided = true)
@@ -100,9 +87,6 @@ public class ImagesView extends Composite {
     @UiField(provided = true)
     SimplePager pager;
 
-    @UiField
-    DisclosurePanel calendarDisclosurePanel;
-    
     @UiField
     FlowPanel calendarPanel;
     
@@ -123,18 +107,34 @@ public class ImagesView extends Composite {
         initWidget(uiBinder.createAndBindUi(this));
         
         // Calendar.
-        calendar.setWidth("1600px");
-        calendar.setHeight("340px");
+        calendar.setWidth("1800px");
+        calendar.setHeight("900px");
         calendar.setDays(7);
-        calendar.addStyleName(style.calendar());
         calendarPanel.add(calendar);
         
-        // Refresh button handler.
+        // Buttons handler.
+        allImagesButton.addClickHandler(allImagesButtonClickHandler);
+        calendarButton.addClickHandler(calendarButtonClickHandler);
         refreshButton.addClickHandler(refreshButtonClickHandler);
+        refreshButton.getElement().getStyle().setMarginLeft(10, Style.Unit.PX);
         
         // Calendar appointment open handler.
         calendar.addOpenHandler(appointmentOpenHandler);
     }
+
+    private final ClickHandler allImagesButtonClickHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent clickEvent) {
+            showAllImages();            
+        }
+    };
+
+    private final ClickHandler calendarButtonClickHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent clickEvent) {
+            showCalendar();
+        }
+    };
     
     private final ClickHandler refreshButtonClickHandler = new ClickHandler() {
         @Override
@@ -149,7 +149,7 @@ public class ImagesView extends Composite {
                 @Override
                 public void onSuccess() {
                     hideLoadingView();
-                    show();
+                    showAllImages();
                 }
             });
         }
@@ -174,6 +174,7 @@ public class ImagesView extends Composite {
                         list.add(result);
                         imagesProvider.setList(list);
                         redrawTable();
+                        showAllImagesPanel();
                     } else {
                         showError(Constants.INSTANCE.notAvailable());
                     }
@@ -204,22 +205,7 @@ public class ImagesView extends Composite {
     
     public void show() {
         clear();
-        showLoadingView();
-        
-        // Build calendar.
         showCalendar();
-        
-        // Images table.
-        final KieClientManager kieClientManager = KieClientManager.getInstance();
-        final List<KieImage> kieImages = kieClientManager.getImages();
-        if (kieImages != null) {
-            for (final KieImage kieImage : kieImages) {
-                addImage(kieImage);
-            }
-            redrawTable();
-            hideLoadingView();
-        }
-
         mainPanel.setVisible(true);
     }
 
@@ -232,15 +218,48 @@ public class ImagesView extends Composite {
                 addImage(kieImage);
             }
             redrawTable();
-            hideLoadingView();
         }
 
+        hideLoadingView();
+        showAllImagesPanel();
         mainPanel.setVisible(true);
     }
 
+    private void showAllImages() {
+        showLoadingView();
+
+        // All images Images table.
+        final KieClientManager kieClientManager = KieClientManager.getInstance();
+        final List<KieImage> kieImages = kieClientManager.getImages();
+        if (kieImages != null) {
+            for (final KieImage kieImage : kieImages) {
+                addImage(kieImage);
+            }
+            redrawTable();
+        }
+
+        hideLoadingView();
+        showAllImagesPanel();
+    }
+    
     private void showCalendar() {
+        allImagesButton.setActive(false);
+        calendarButton.setActive(true);
+        imagesPanel.setVisible(false);
+        calendarPanel.setVisible(true);
+        showCalendarPanel();
+        
+    }
+
+    private void showAllImagesPanel() {
+        allImagesButton.setActive(true);
+        calendarButton.setActive(false);
+        imagesPanel.setVisible(true);
+        calendarPanel.setVisible(false);
+    }
+    
+    private void showCalendarPanel() {
         calendar.show();
-        calendarDisclosurePanel.setVisible(true);
     }
     
     private void initImagesGrid() {
@@ -440,7 +459,6 @@ public class ImagesView extends Composite {
     public void clear() {
         hideLoadingView();
         hidePullView();
-        calendarDisclosurePanel.setVisible(false);
         mainPanel.setVisible(false);
         imagesProvider.getList().clear();
     }
@@ -532,5 +550,5 @@ public class ImagesView extends Composite {
     public HandlerRegistration addShowContainersEventHandler(final ShowContainersEventHandler handler) {
         return addHandler(handler, ShowContainersEvent.TYPE);
     }
-
+    
 }

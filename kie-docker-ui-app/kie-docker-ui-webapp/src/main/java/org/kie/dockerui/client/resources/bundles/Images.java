@@ -126,6 +126,9 @@ public interface Images extends ClientBundle {
 
     @Source("images/circle_grey_icon.png")
     ImageResource circleGreyIcon();
+
+    @Source("images/circle_grey_close_icon.png")
+    ImageResource circleGreyCloseIcon();
     
     @Source("images/green_tick.png")
     ImageResource greenTick();

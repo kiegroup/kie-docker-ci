@@ -18,8 +18,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.ProvidesKey;
 import org.kie.dockerui.client.Log;
 import org.kie.dockerui.client.resources.i18n.Constants;
 import org.kie.dockerui.client.service.DockerService;

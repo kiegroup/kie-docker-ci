@@ -4,7 +4,6 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ButtonCell;
 import com.github.gwtbootstrap.client.ui.CellTable;
 import com.github.gwtbootstrap.client.ui.TextBox;
-import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -36,7 +35,6 @@ import org.kie.dockerui.client.service.SettingsClientHolder;
 import org.kie.dockerui.client.util.ClientUtils;
 import org.kie.dockerui.client.widgets.TimeoutPopupPanel;
 import org.kie.dockerui.shared.model.KieArtifact;
-import org.kie.dockerui.shared.model.KieImage;
 import org.kie.dockerui.shared.settings.Settings;
 
 import java.util.ArrayList;
