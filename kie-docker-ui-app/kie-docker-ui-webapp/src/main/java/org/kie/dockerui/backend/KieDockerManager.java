@@ -1,32 +1,65 @@
 package org.kie.dockerui.backend;
 
+import org.kie.dockerui.backend.service.SettingsServiceImpl;
+import org.kie.dockerui.shared.settings.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class KieDockerManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(KieDockerManager.class.getName());
+    
     private static KieDockerManager instance;
+    private static final SettingsServiceImpl settingsService = new SettingsServiceImpl();
+    private static final KieStatusManager statusManager = KieStatusManager.getInstance();
 
-    public static KieDockerManager getInstance() {
+    public static synchronized KieDockerManager getInstance() {
         if (instance == null) {
             instance = new KieDockerManager();
         }
         return instance;
     }
-    
-    public void initApplication() {
 
-        doLog("Initializing KIE Docker UI application....");
+    public KieDockerManager() {
+    }
+
+    public void init() {
+
+        LOGGER.info("Initializing KIE Docker UI application....");
         
+        // Run the status manager, using daemon mode or just a single run.
+        if (isStatusManagerDaemon()) {
+            runStatusManagerAsDaemon();
+        } else {
+            runStatusManager();
+        }
+
+        LOGGER.info("Initialization of KIE Docker UI application completed!");
+    }
+
+    public void shutdown() {
+        if (isStatusManagerDaemon()) {
+            LOGGER.info("Shutting down the Status Manager daemon.");
+            statusManager.shutdown();
+        }
+    }
+    
+    private void runStatusManagerAsDaemon() {
+        Settings settings = settingsService.getSettings();
+        long pullInterval = settings.getPullInterval();
+        LOGGER.info("Status Manager will run as a daemon using a pulling interval of [" + pullInterval + "] minutes.");
+        statusManager.start(pullInterval);
+    }
+    
+    private void runStatusManager() {
         // Obtain status for running containers.
-        doLog("Building KIE containers application status cache....");
-        final KieStatusManager kieStatusManager = KieStatusManager.getInstance();
-        kieStatusManager.build();
-        doLog("KIE containers application status cache built successfully.");
-
-        doLog("Initialization of KIE Docker UI application completed!");
-        
-    }
-
-    private static void doLog(String message) {
-        System.out.println(message);
+        LOGGER.info("Status Manager will perform a single run .");
+        statusManager.run();
     }
     
+    private boolean isStatusManagerDaemon() {
+        Settings settings = settingsService.getSettings();
+        return settings.isPullEnabled();
+    }
+
 }

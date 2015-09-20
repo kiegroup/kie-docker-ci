@@ -6,17 +6,18 @@ import org.kie.dockerui.shared.KieImageTypeManager;
 import org.kie.dockerui.shared.model.KieContainer;
 import org.kie.dockerui.shared.model.KieImageType;
 import org.kie.dockerui.shared.util.DatabaseUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-/** 
- * Commands for connection to db container:
- *  - mysql -u root -pmysql --host=localhost --port=49155 --protocol=TCP
- *  - psql -U postgres -h localhost -p 49157 -W
- */
-// TODO: security, override properties by using java system properties, etc.
 public class DatabaseServiceImpl extends RemoteServiceServlet implements DatabaseService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseServiceImpl.class.getName());
+    
     private static final String DRIVER_MYSQL = "com.mysql.jdbc.Driver";
     private static final String DRIVER_POSTGRES = "org.postgresql.Driver";
     
@@ -26,26 +27,26 @@ public class DatabaseServiceImpl extends RemoteServiceServlet implements Databas
     @Override
     public void createDatabase(String containerId, KieImageType imageType, String dbName) throws Exception {
         if (isEmpty(containerId)) {
-            doLog("No container id specified for creating the database.");
+            LOGGER.error("No container id specified for creating the database.");
             return;
         }
         if (isEmpty(dbName)) {
-            doLog("No database name specified.");
+            LOGGER.error("No database name specified.");
             return;
         }
         if (imageType == null) {
-            doLog("No database type specified.");
+            LOGGER.error("No database type specified.");
             return;
         }
         
         if (!KieImageTypeManager.KIE_MYSQL.equals(imageType) && !KieImageTypeManager.KIE_POSTGRESQL.equals(imageType)) {
-            doLog("Database type not supported. Type: " + imageType.getName());
+            LOGGER.error("Database type not supported. Type: " + imageType.getName());
             return;
         }
 
         final KieContainer container = dockerService.getContainer(containerId);
         if (container == null) {
-            doLog("Container with id " + containerId + "not found.");
+            LOGGER.error("Container with id " + containerId + "not found.");
             return;
         }
 
@@ -92,8 +93,4 @@ public class DatabaseServiceImpl extends RemoteServiceServlet implements Databas
         return string == null || string.trim().length() == 0;
     }
     
-    private static void doLog(String message) {
-        System.out.println(message);
-    }
-
 }

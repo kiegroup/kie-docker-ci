@@ -15,8 +15,9 @@
  */
 package org.kie.dockerui.client.widgets;
 
-import com.github.gwtbootstrap.client.ui.*;
+import com.github.gwtbootstrap.client.ui.AccordionGroup;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.DataGrid;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.google.gwt.cell.client.EditTextCell;
@@ -31,12 +32,12 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.client.ui.Label;
 import org.kie.dockerui.client.Log;
 import org.kie.dockerui.client.resources.i18n.Constants;
-import org.kie.dockerui.client.service.*;
+import org.kie.dockerui.client.service.DockerService;
+import org.kie.dockerui.client.service.DockerServiceAsync;
+import org.kie.dockerui.client.service.SettingsClientHolder;
 import org.kie.dockerui.client.util.ClientUtils;
-import org.kie.dockerui.shared.KieImageTypeManager;
 import org.kie.dockerui.shared.model.KieContainer;
 import org.kie.dockerui.shared.model.KieImageCategory;
 import org.kie.dockerui.shared.model.KieImageType;
@@ -47,7 +48,6 @@ import org.kie.dockerui.shared.util.SharedUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class KieContainerDetails extends Composite {
 
