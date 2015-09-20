@@ -4,23 +4,34 @@ import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse;
-import com.github.dockerjava.api.model.*;
+import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.api.model.ContainerConfig;
+import com.github.dockerjava.api.model.Image;
+import com.github.dockerjava.api.model.Link;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.kie.dockerui.backend.KieStatusManager;
-import org.kie.dockerui.backend.service.util.KieDockerArtifactBuilder;
+import org.kie.dockerui.backend.service.builder.KieDockerArtifactBuilder;
+import org.kie.dockerui.backend.util.Timer;
 import org.kie.dockerui.client.service.DockerService;
 import org.kie.dockerui.client.service.SettingsService;
 import org.kie.dockerui.shared.model.*;
 import org.kie.dockerui.shared.util.SharedUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class DockerServiceImpl extends RemoteServiceServlet implements DockerService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DockerServiceImpl.class.getName());
+    
     private static final int TIMEOUT = 30000;
     private static final String NO_VALUE = "<none>";
 
@@ -36,43 +47,82 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
 
     @Override
     public KieListCommandResponse list() {
+
+        Timer timer = new Timer();
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Start listing images and containers.");
+            timer.start();
+        }
+        
         final List<KieImage> images = listImages();
         final List<KieContainer> containers = listContainers();
+
+        if (LOGGER.isDebugEnabled()) {
+            timer.end();
+            LOGGER.debug("Images and containers listed. Elapsed time = " + timer.getTotalTime());
+        }
+        
         return new KieListCommandResponse(images, containers);
     }
 
     @Override
     public List<KieContainer> listContainers() {
+
+        Timer timer = new Timer();
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Start listing containers.");
+            timer.start();
+        }
+
+        List<KieContainer> result = null;
         DockerClient dockerClient = getClient();
         List<Container> containers = dockerClient.listContainersCmd().withShowAll(true).exec();
         if (containers != null) {
-            List<KieContainer> result = new LinkedList<KieContainer>();
+            result = new LinkedList<KieContainer>();
             for (Container container : containers) {
                 KieContainer kieContainer = KieDockerArtifactBuilder.build(container);
                 if (kieContainer != null) result.add(kieContainer);
             }
-            return result;
+        }
+
+        if (LOGGER.isDebugEnabled()) {
+            timer.end();
+            LOGGER.debug("Containers listed. Elapsed time = " + timer.getTotalTime());
         }
         
-        return null;
+        return result;
     }
 
     @Override
     public List<KieContainer> listContainers(Collection<String> ids) {
-        if (ids != null & !ids.isEmpty()) {
+        List<KieContainer> result = null;
+
+        if (ids != null && !ids.isEmpty()) {
+
+            Timer timer = new Timer();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Start listing containers.");
+                timer.start();
+            }
+            
             DockerClient dockerClient = getClient();
             List<Container> containers = dockerClient.listContainersCmd().withShowAll(true).exec();
             if (containers != null) {
-                List<KieContainer> result = new LinkedList<KieContainer>();
+                result = new LinkedList<KieContainer>();
                 for (Container container : containers) {
                     KieContainer kieContainer = KieDockerArtifactBuilder.build(container);
                     if (ids.contains(container.getId())) result.add(kieContainer);
                 }
-                return result;
             }
+
+            if (LOGGER.isDebugEnabled()) {
+                timer.end();
+                LOGGER.debug("Containers listed. Elapsed time = " + timer.getTotalTime());
+            }
+            
         }
 
-        return null;
+        return result;
     }
 
     @Override
@@ -90,7 +140,6 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
 
     @Override
     public KieImage getImage(String imageId) {
-        DockerClient dockerClient = getClient();
         List<KieImage> images= listImages();
         if (images != null) {
             for (KieImage image : images) {
@@ -103,10 +152,18 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
 
     @Override
     public List<KieImage> listImages() {
+        List<KieImage> result = null;
+
+        Timer timer = new Timer();
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Start listing images.");
+            timer.start();
+        }
+        
         DockerClient dockerClient = getClient();
         List<Image> images = dockerClient.listImagesCmd().withShowAll(true).exec();
         if (images != null) {
-            List<KieImage> result = new LinkedList<KieImage>();
+            result = new LinkedList<KieImage>();
             for (Image image : images) {
                 KieImage kieImage = KieDockerArtifactBuilder.build(image);
                 
@@ -114,10 +171,14 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
                     result.add(kieImage);
                 }
             }
-            return result;
         }
 
-        return null;
+        if (LOGGER.isDebugEnabled()) {
+            timer.end();
+            LOGGER.debug("Images listed. Elapsed time = " + timer.getTotalTime());
+        }
+        
+        return result;
     }
 
     @Override
@@ -158,7 +219,6 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
         summary.setContainersCount(containersCount);
         summary.setKieImagesCount(kieImages.size());
         summary.setKieContainersCount(kieContainers.size());
-        summary.setKieImages(kieImages);
         return summary;
     }
 
@@ -167,7 +227,7 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
         DockerClient dockerClient = getClient();
         
         if (image == null  || image.trim().length() == 0) {
-            doLog("Container's image name to create is empty");
+            LOGGER.error("Container's image name to create is empty");
             return null;
         }
         
@@ -227,6 +287,13 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
 
     @Override
     public KieContainerDetails inspect(String containerId) {
+
+        Timer timer = new Timer();
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Start inspecting container with id = " + containerId);
+            timer.start();
+        }
+        
         final DockerClient dockerClient = getClient();
         final InspectContainerResponse response = dockerClient.inspectContainerCmd(containerId).exec();
         final InspectContainerResponse.NetworkSettings networkSettings = response.getNetworkSettings();
@@ -248,6 +315,12 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
         details.setPortMappings(portMappings);
         details.setContainerArgs(containerArgs);
         details.setEnvVars(escapeEnvVars(envVars));
+
+        if (LOGGER.isDebugEnabled()) {
+            timer.end();
+            LOGGER.debug("container with id = " + containerId + " inspected. Elapsed time = " + timer.getTotalTime());
+        }
+        
         return details;
     }
     
@@ -268,29 +341,6 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
         return DockerClientBuilder.getInstance(url).build();
     }
     
-    private List<Image> getImages() {
-        DockerClient dockerClient = getClient();
-        List<Image> images = dockerClient.listImagesCmd().exec();
-        return images;
-    }
-    
-    private String toString(List<Image> images) {
-        StringBuilder builder = new StringBuilder();
-        for (Image image : images) {
-            final String id = image.getId();
-            final long created = image.getCreated();
-            final Date createdDate = new Date(created);
-            builder.append("Id: " + id + " ### Created: " + createdDate + "\n");
-        }
-        return builder.toString();
-    }
-    
-    private Info getInfo() {
-        DockerClient dockerClient = getClient();
-        Info info = dockerClient.infoCmd().exec();
-        return info;
-    }
-    
     private InputStream getLogs(String containerId) {
         DockerClient dockerClient = getClient();
         // TODO: Error stream.
@@ -302,7 +352,7 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
         try {
             return IOUtils.toString(stream, "UTF-8");
         } catch (Exception e) {
-            doLog("Error. Message: " + e.getMessage());
+            LOGGER.error("Error reading the input stream.", e);
         } finally {
             IOUtils.closeQuietly(stream);
         }
@@ -310,8 +360,4 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
         return null;
     }
     
-    private static void doLog(String message) {
-        System.out.println(message);
-    }
-
 }

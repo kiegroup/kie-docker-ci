@@ -59,7 +59,7 @@
           <b:Button icon="BACKWARD" ui:field="backButton" visible="false"/>
         </b:Tooltip>
         <b:Tooltip text="{i18n.refresh}">
-          <b:Button icon="REFRESH" ui:field="refreshButton"/>
+          <b:Button icon="REFRESH" iconSize="LARGE" ui:field="refreshButton" type="LINK"/>
         </b:Tooltip>
       </b:ButtonGroup>
     </g:FlowPanel>

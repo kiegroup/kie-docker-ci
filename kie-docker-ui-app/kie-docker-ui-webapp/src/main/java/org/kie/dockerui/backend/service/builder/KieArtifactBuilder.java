@@ -1,4 +1,4 @@
-package org.kie.dockerui.backend.service.util;
+package org.kie.dockerui.backend.service.builder;
 
 import org.kie.dockerui.shared.model.KieArtifact;
 

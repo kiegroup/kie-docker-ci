@@ -149,7 +149,6 @@ public interface Constants extends ConstantsWithLookup {
     String reloadStatusCompleted();
     String imagesCount();
     String containersCount();
-    String availableKieImagesByDate();
     String availableKieImages();
     String created();
     String systemSummary();
@@ -165,4 +164,5 @@ public interface Constants extends ConstantsWithLookup {
     String searchFileName();
     String search();
     String cleanSearch();
+    String containerIsDown();
 }
