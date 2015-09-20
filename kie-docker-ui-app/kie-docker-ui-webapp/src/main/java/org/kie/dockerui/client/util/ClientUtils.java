@@ -1,6 +1,5 @@
 package org.kie.dockerui.client.util;
 
-import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.resources.client.ImageResource;
@@ -198,13 +197,13 @@ public class ClientUtils {
     }
     
     public static ImageResource getStatusImage(final KieAppStatus status) {
-        ImageResource imageResource = Images.INSTANCE.circleRedIcon();
+        ImageResource imageResource = Images.INSTANCE.circleGreyCloseIcon();
         if (status != null) {
             switch (status) {
                 case OK:
                     imageResource = Images.INSTANCE.circleGreenIcon();
                     break;
-                case NOT_STARTING_UP:
+                case FAILED:
                     imageResource = Images.INSTANCE.circleRedIcon();
                     break;
                 case NOT_EVALUATED:
@@ -222,7 +221,7 @@ public class ClientUtils {
                 case OK:
                     iconTooltip = Constants.INSTANCE.statusRunnable();
                     break;
-                case NOT_STARTING_UP:
+                case FAILED:
                     iconTooltip = Constants.INSTANCE.statusNotRunnable();
                     break;
                 case NOT_EVALUATED:

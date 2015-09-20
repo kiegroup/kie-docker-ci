@@ -15,8 +15,8 @@
  */
 package org.kie.dockerui.client.widgets;
 
-import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.*;
 import com.github.gwtbootstrap.client.ui.Image;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
@@ -41,7 +41,6 @@ import org.kie.dockerui.client.service.DockerService;
 import org.kie.dockerui.client.service.DockerServiceAsync;
 import org.kie.dockerui.client.service.SettingsService;
 import org.kie.dockerui.client.service.SettingsServiceAsync;
-import org.kie.dockerui.client.util.ClientUtils;
 import org.kie.dockerui.shared.KieImageTypeManager;
 import org.kie.dockerui.shared.model.KieContainerStartArguments;
 import org.kie.dockerui.shared.model.KieImage;

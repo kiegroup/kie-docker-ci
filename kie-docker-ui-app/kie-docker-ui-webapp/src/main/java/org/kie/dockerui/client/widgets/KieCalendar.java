@@ -23,19 +23,15 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.kie.dockerui.client.KieClientManager;
 import org.kie.dockerui.client.Log;
 import org.kie.dockerui.client.resources.i18n.Constants;
-import org.kie.dockerui.client.service.DockerService;
-import org.kie.dockerui.client.service.DockerServiceAsync;
 import org.kie.dockerui.client.util.ClientUtils;
 import org.kie.dockerui.shared.model.KieAppStatus;
 import org.kie.dockerui.shared.model.KieImage;
@@ -50,14 +46,6 @@ public class KieCalendar extends Composite {
     interface KieCalendarBinder extends UiBinder<Widget, KieCalendar> {}
     private static KieCalendarBinder uiBinder = GWT.create(KieCalendarBinder.class);
     
-    interface KieCalendarStyle extends CssResource {
-        String mainPanel();
-        String calendarPanel();
-    }
-
-    @UiField
-    KieCalendarStyle style;
-    
     @UiField
     FlowPanel mainPanel;
     
@@ -66,8 +54,6 @@ public class KieCalendar extends Composite {
 
     @UiField
     FlowPanel calendarPanel;
-    
-    private final DockerServiceAsync dockerService = GWT.create(DockerService.class);
     
     private final Calendar calendar = new Calendar();
     final DecoratedPopupPanel appointmentPopup = new DecoratedPopupPanel(true);
@@ -166,7 +152,7 @@ public class KieCalendar extends Composite {
             if (status != null) {
                 AppointmentStyle style = AppointmentStyle.GREY;
                 switch (status) {
-                    case NOT_STARTING_UP:
+                    case FAILED:
                         style = AppointmentStyle.RED;
                         color = "red";
                         break;

@@ -15,15 +15,9 @@
  */
 package org.kie.dockerui.client.widgets;
 
-import com.github.gwtbootstrap.client.ui.ButtonCell;
 import com.github.gwtbootstrap.client.ui.CellTable;
-import com.github.gwtbootstrap.client.ui.IconCell;
-import com.github.gwtbootstrap.client.ui.constants.IconSize;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.cell.client.ImageCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -42,19 +36,24 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.*;
 import org.kie.dockerui.client.KieClientManager;
 import org.kie.dockerui.client.Log;
+import org.kie.dockerui.client.resources.bundles.Images;
 import org.kie.dockerui.client.resources.i18n.Constants;
-import org.kie.dockerui.client.service.*;
+import org.kie.dockerui.client.service.DockerService;
+import org.kie.dockerui.client.service.DockerServiceAsync;
+import org.kie.dockerui.client.service.SettingsClientHolder;
 import org.kie.dockerui.client.util.ClientUtils;
 import org.kie.dockerui.shared.model.KieAppStatus;
 import org.kie.dockerui.shared.model.KieContainer;
 import org.kie.dockerui.shared.settings.Settings;
 import org.kie.dockerui.shared.util.SharedUtils;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -211,11 +210,20 @@ public class KieContainersExplorer extends Composite {
 
             @Override
             public ImageResource getValue(final KieContainer container) {
-                final KieAppStatus status = container.getAppStatus();
-                final ImageResource imageResource = ClientUtils.getStatusImage(status);
-                final StringBuilder iconTooltip = new StringBuilder(ClientUtils.getStatusText(status));
-                iconTooltip.append(" (").append(Constants.INSTANCE.clickForUpdate()).append(")");
-                statusCell.setTooltip(new SafeHtmlBuilder().appendEscaped(iconTooltip.toString()).toSafeHtml().asString());
+                final boolean isUp = SharedUtils.getContainerStatus(container);
+                ImageResource imageResource = null;
+                String tooltipText = null;
+                if (!isUp) {
+                    imageResource = Images.INSTANCE.circleGreyCloseIcon();
+                    String statusText = Constants.INSTANCE.containerIsDown();
+                    tooltipText = new SafeHtmlBuilder().appendEscaped(statusText).toSafeHtml().asString();
+                } else {
+                    final KieAppStatus status = container.getAppStatus();
+                    imageResource = ClientUtils.getStatusImage(status);
+                    String statusText = ClientUtils.getStatusText(status);
+                    tooltipText = new SafeHtmlBuilder().appendEscaped(statusText + " (" + Constants.INSTANCE.clickForUpdate() + ")").toSafeHtml().asString();
+                }
+                statusCell.setTooltip(tooltipText);
                 return imageResource;
             }
         };
@@ -338,7 +346,7 @@ public class KieContainersExplorer extends Composite {
     
     private void updateStatus(final KieContainer container) {
         showLoadingView();
-        if (!SharedUtils.isKieApp(container)) {
+        if ( !SharedUtils.isKieApp(container) || !SharedUtils.getContainerStatus(container) ) {
             hideLoadingView();
             showPopup(Constants.INSTANCE.notAvailable());
         } else {

@@ -1,18 +1,21 @@
 package org.kie.dockerui.backend.servlet;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class KieArtifactsDownloadServlet extends HttpServlet {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(KieArtifactsDownloadServlet.class.getName());
     public static final String FILE_PATH_PARAM = "filePath";
 
     protected void doGet(HttpServletRequest request,
@@ -24,7 +27,7 @@ public class KieArtifactsDownloadServlet extends HttpServlet {
 
         // if you want to use a relative path to context root:
         String relativePath = getServletContext().getRealPath("");
-        System.out.println("relativePath = " + relativePath);
+        LOGGER.debug("relativePath = " + relativePath);
 
         // obtains ServletContext
         ServletContext context = getServletContext();
@@ -35,7 +38,7 @@ public class KieArtifactsDownloadServlet extends HttpServlet {
             // set to binary type if MIME mapping not found
             mimeType = "application/octet-stream";
         }
-        System.out.println("MIME type: " + mimeType);
+        LOGGER.debug("MIME type: " + mimeType);
 
         // modifies response
         response.setContentType(mimeType);

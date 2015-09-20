@@ -2,11 +2,14 @@ package org.kie.dockerui.backend;
 
 import org.kie.dockerui.backend.service.DockerServiceImpl;
 import org.kie.dockerui.backend.service.SettingsServiceImpl;
+import org.kie.dockerui.backend.util.KieDockerUtils;
 import org.kie.dockerui.shared.model.KieAppStatus;
 import org.kie.dockerui.shared.model.KieContainer;
 import org.kie.dockerui.shared.model.KieContainerDetails;
 import org.kie.dockerui.shared.settings.Settings;
 import org.kie.dockerui.shared.util.SharedUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -14,16 +17,22 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-// TODO: Persistence?
 public class KieStatusManager {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(KieStatusManager.class.getName());
+    
     private static final DockerServiceImpl dockerService = new DockerServiceImpl();
     private static final SettingsServiceImpl settingsService = new SettingsServiceImpl();
-    
+    private static final ExecutorService executor = Executors.newFixedThreadPool(1);
+    private static final int TIMEOUT = 30000;
     private static KieStatusManager instance;
     private static final Map<String, KieAppStatus> statusMap = new HashMap<String, KieAppStatus>();
+    private boolean isStarted;
 
-    public static KieStatusManager getInstance() {
+    public static synchronized KieStatusManager getInstance() {
         if (instance == null) {
             instance = new KieStatusManager();
         }
@@ -31,11 +40,44 @@ public class KieStatusManager {
     }
 
     public KieStatusManager() {
-        
+        isStarted = false;
     }
-    
-    public void build() {
-        doLog("Building status caché for KIE images...");
+
+    /**
+     * Starts the daemon for pull remote containers using Docker REST services.
+     */
+    public void start() {
+        start(null);
+    }
+
+    /**
+     * Starts the daemon for pull remote containers using Docker REST services.
+     *
+     * @param pullInterval The pulling interval, in seconds.
+     */
+    public void start(Long pullInterval) {
+        if (isStarted) {
+            throw new RuntimeException("Status Manager Daemon has been already started");
+        }
+        
+        KieStatusManagerDaemonWork work = pullInterval != null ? new KieStatusManagerDaemonWork(pullInterval) :
+                new KieStatusManagerDaemonWork();
+        executor.execute(work);
+        isStarted = true;
+    }
+
+    /**
+     * Shutdown the daemon. As only one in the executor service, shutdown the executor.
+     */
+    public void shutdown() {
+        executor.shutdown();
+    }
+
+    /**
+     * Runs a single status request to the Docker remote service.
+     */
+    public synchronized void run() {
+        LOGGER.info("Building status caché for KIE images...");
         statusMap.clear();
         final List<KieContainer> containers = dockerService.listContainers();
         if (containers != null) {
@@ -44,23 +86,26 @@ public class KieStatusManager {
                 addStatus(container.getImage(), status);
             }
         }
-        doLog("Status caché for KIE images build completed.");
+        LOGGER.info("Status caché for KIE images build completed.");
     }
-    
+
     public void addStatus(final String image, final KieAppStatus status) {
         if (image != null && status != null) {
             statusMap.put(image, status);
-            doLog("Added or updated status " + status.name() + " for image " + image);
+            LOGGER.info("Added or updated status " + status.name() + " for image " + image);
         }
     }
 
-    public void updateStatus(final KieContainer container) {
+    public synchronized void updateStatus(final KieContainer container) {
         if (container != null && SharedUtils.isKieApp(container)) {
-            final String image = container.getImage();
-            statusMap.remove(image);
-            final KieAppStatus s = getStatus(container);
-            statusMap.put(image, s);
-            doLog("Updated status to " + s.name() + " for image " + image);
+            final boolean isUp = SharedUtils.getContainerStatus(container);
+            if (isUp) {
+                final String image = container.getImage();
+                statusMap.remove(image);
+                final KieAppStatus s = getStatus(container);
+                statusMap.put(image, s);
+                LOGGER.info("Updated status to " + s.name() + " for image " + image);    
+            }
         }
     }
 
@@ -77,9 +122,8 @@ public class KieStatusManager {
         final String image = container.getImage();
         KieAppStatus s = statusMap.get(image);
         if (s == null) {
-            final KieContainerDetails details = dockerService.inspect(container.getId());
             final Settings settings = settingsService.getSettings();
-            final String url = getWebAddress(container, details, settings);
+            final String url = getWebAddress(container, settings);
             return getStatusByURL(url);
         }
         
@@ -93,23 +137,24 @@ public class KieStatusManager {
             HttpURLConnection connection = (HttpURLConnection) siteURL
                     .openConnection();
             connection.setRequestMethod("GET");
+            connection.setConnectTimeout(TIMEOUT);
+            connection.setReadTimeout(TIMEOUT);
             connection.connect();
 
             int code = connection.getResponseCode();
-            doLog("Ping to URL '" + url + "' // Response:" + code);
+            LOGGER.debug("Ping to URL '" + url + "' // Response:" + code);
             // A 200OK or 401 Unauthorized means that application is up.
             if (code == 200 || code == 401) {
                 return KieAppStatus.OK;
             }
         } catch (Exception e) {
-            doLog("Error getting status for URL '" + url + "'. Message: " + e.getMessage());
-            e.printStackTrace();
-            return KieAppStatus.NOT_STARTING_UP;
+            LOGGER.error("Error getting status for URL '" + url + "'.", e);
+            return KieAppStatus.FAILED;
         }
-        return KieAppStatus.NOT_STARTING_UP;
+        return KieAppStatus.FAILED;
     }
 
-    public static String getWebAddress(final KieContainer container, final org.kie.dockerui.shared.model.KieContainerDetails details, final Settings settings)  {
+    private static String getWebAddress(final KieContainer container, final Settings settings)  {
         final String protocol = settings.getProtocol();
         final String host = settings.getPublicHost();
         final int httpPublicPort = SharedUtils.getPublicPort(8080, container);
@@ -119,13 +164,48 @@ public class KieStatusManager {
         try {
             return new URL(protocol, host, httpPublicPort, "/" + contextPath).toString();
         } catch (MalformedURLException e) {
-            doLog("Error getting web address for application. Message: " + e.getMessage());
+            LOGGER.error("Error getting web address for application.", e);
         }
         return null;
     }
+    
+    /*
+        ************** DAEMON ******************
+    
+     */
 
-    private static void doLog(String message) {
-        System.out.println(message);
+    private class KieStatusManagerDaemonWork implements Runnable {
+
+        /* Pulling interval defaults to 10 minutes. */
+        private long pullInterval = 10;
+
+        public KieStatusManagerDaemonWork() {
+
+        }
+
+        /**
+         * Constructor for a given custom pulling interval.
+         * @param pullInterval The pulling interval, in minutes.
+         */
+        public KieStatusManagerDaemonWork(long pullInterval) {
+            this.pullInterval = pullInterval;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    // Run the status manager sync with remote docker containers.
+                    final long interval = KieDockerUtils.getMillis(pullInterval);
+                    LOGGER.info("Running status manager daemon work [interval=" + pullInterval + "min].");
+                    final KieStatusManager manager = KieStatusManager.getInstance();
+                    manager.run();
+                    Thread.sleep(interval);
+                }
+            } catch (InterruptedException e) {
+                LOGGER.error("Error running status manager daemon.", e);
+            }
+        }
     }
 
 }

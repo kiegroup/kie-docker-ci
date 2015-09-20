@@ -14,13 +14,16 @@ public class Settings implements IsSerializable{
     private String kieRepositoryName;
     private String artifactsPath;
     private String jenkinsJobURL;
+    private boolean pullEnabled;
+    private long pullInterval;
 
     public Settings() {
         
     }
 
     public Settings(final String protocol, final String privateHost, String publicHost, final String user, final int restApiPort,
-                    final boolean registryEnabled, final int registryPort, final String kieRepositoryName, final String artifactsPath, final String jenkinsJobURL) {
+                    final boolean registryEnabled, final int registryPort, final String kieRepositoryName, final String artifactsPath, final String jenkinsJobURL,
+                    final boolean pullEnabled, final long pullInterval) {
         this.protocol = protocol;
         this.privateHost = privateHost;
         this.publicHost = publicHost;
@@ -31,6 +34,8 @@ public class Settings implements IsSerializable{
         this.kieRepositoryName = kieRepositoryName;
         this.artifactsPath = artifactsPath;
         this.jenkinsJobURL = jenkinsJobURL;
+        this.pullEnabled = pullEnabled;
+        this.pullInterval = pullInterval;
     }
 
     public String getPrivateHost() {
@@ -111,5 +116,13 @@ public class Settings implements IsSerializable{
 
     public void setJenkinsJobURL(String jenkinsJobURL) {
         this.jenkinsJobURL = jenkinsJobURL;
+    }
+
+    public boolean isPullEnabled() {
+        return pullEnabled;
+    }
+
+    public long getPullInterval() {
+        return pullInterval;
     }
 }

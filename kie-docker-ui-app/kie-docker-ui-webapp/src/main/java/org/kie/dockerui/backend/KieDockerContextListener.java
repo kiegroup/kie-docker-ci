@@ -9,13 +9,15 @@ public class KieDockerContextListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         
         // Initialize the application.
-        final KieDockerManager kieDockerManager = KieDockerManager.getInstance();
-        kieDockerManager.initApplication();
+        KieDockerManager.getInstance().init();
         
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
 
+        // Shutdown the application.
+        KieDockerManager.getInstance().shutdown();
+        
     }
 }

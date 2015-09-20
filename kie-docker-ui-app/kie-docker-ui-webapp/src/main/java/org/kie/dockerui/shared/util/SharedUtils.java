@@ -34,7 +34,7 @@ public class SharedUtils {
         // TODO: Improve status detection.
         return container.getStatus() != null && container.getStatus().contains("Up");
     }
-    
+
     public static int getPublicPort(final int port, final KieContainer container) {
         if (container != null) {
             List<KieContainerPort> ports = container.getPorts();
