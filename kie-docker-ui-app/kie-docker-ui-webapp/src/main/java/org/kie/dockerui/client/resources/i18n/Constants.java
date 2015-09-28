@@ -52,6 +52,7 @@ public interface Constants extends ConstantsWithLookup {
     String noEnvVars();
     String name();
     String value();
+    String version();
     String stop();
     String start();
     String restart();
@@ -77,6 +78,7 @@ public interface Constants extends ConstantsWithLookup {
     String pullCommand();
     String pull();
     String download();
+    String downloadWAR();
     String noPublicPortsAvailable();
     String noLogs();
     String selectKieAppType();
@@ -122,8 +124,10 @@ public interface Constants extends ConstantsWithLookup {
     String createKieDatabase();
     String createAndStartKieContainer();
     String finished();
+    String nextRefresh();
     String refreshPlay();
     String refreshStop();
+    String newLiteral();
     String createNew();
     String createNewForThisType();
     String noImagesForCreateContainer();
@@ -135,6 +139,8 @@ public interface Constants extends ConstantsWithLookup {
     String imageId();
     String imageRepository();
     String imageCreationDate();
+    String imageTaggedDate();
+    String noDateTagInfo();
     String versionDetails();
     String view();
     String timeoutFired();
@@ -165,4 +171,5 @@ public interface Constants extends ConstantsWithLookup {
     String search();
     String cleanSearch();
     String containerIsDown();
+    String runningContainersCount();
 }

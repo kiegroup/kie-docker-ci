@@ -2,6 +2,7 @@ package org.kie.dockerui.client.util;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeUri;
 import org.kie.dockerui.backend.servlet.KieArtifactsDownloadServlet;
@@ -9,6 +10,7 @@ import org.kie.dockerui.client.resources.bundles.Images;
 import org.kie.dockerui.client.resources.i18n.Constants;
 import org.kie.dockerui.shared.KieImageTypeManager;
 import org.kie.dockerui.shared.model.*;
+import org.kie.dockerui.shared.model.impl.*;
 import org.kie.dockerui.shared.settings.Settings;
 import org.kie.dockerui.shared.util.SharedUtils;
 
@@ -17,6 +19,7 @@ import java.util.*;
 public class ClientUtils {
 
     public static final KieContainerTemplates TEMPLATES = GWT.create(KieContainerTemplates.class);
+    private static final DateTimeFormat IMAGE_TAG_DATE_FORMAT = DateTimeFormat.getFormat("yyyyMMdd-HHmmss");
     private static final String DOWNLOAD_SERVLET_MAPPING = "download";
     private static final long MILLISECONDS_IN_SECOND = 1000l;
     private static final long SECONDS_IN_MINUTE = 60l;
@@ -55,10 +58,22 @@ public class ClientUtils {
         return TEMPLATES.webAddress(protocol, host, httpPublicPort, contextPath).asString();
     }
 
-    public static String getDownloadURL(final KieArtifact artifact, final Settings settings) {
+    
+    public static String getDownloadURL(final Settings settings, final KieImageType kieImageType, final KieImageType appServerType, final String tag) {
+        final String artifactsPath = settings.getArtifactsPath();
+        final String artifactQualifier = KieImageTypeManager.getArtifactQualifier(kieImageType, appServerType);
+        final String absolutePath = artifactsPath + "/" + tag + "/" + kieImageType.getArtifactId() + "-" + tag + "-" + artifactQualifier + ".war";
+        return _getDownloadURL(absolutePath);
+    }
+
+    public static String getDownloadURL(final KieArtifact artifact) {
+        return _getDownloadURL(artifact.getAbsoluteFilePath());
+    }
+
+    private static String _getDownloadURL(final String absolutePath) {
         final String moduleURL = GWT.getModuleBaseURL();
-        final String path = URL.encodeQueryString(artifact.getAbsoluteFilePath());
-        
+        final String path = URL.encodeQueryString(absolutePath);
+
         final StringBuilder contextPath = new StringBuilder(moduleURL)
                 .append(DOWNLOAD_SERVLET_MAPPING)
                 .append("?").append(KieArtifactsDownloadServlet.FILE_PATH_PARAM)
@@ -77,41 +92,29 @@ public class ClientUtils {
     public static SafeUri getImageUri(final KieImageType containerType) {
         if (containerType == null) return null;
 
-        if (KieImageTypeManager.KIE_WB.equals(containerType)) {
+        if (KieWorkbenchType.INSTANCE.equals(containerType)) {
             return Images.INSTANCE.kieIde().getSafeUri();
-        } else if (KieImageTypeManager.KIE_DROOLS_WB.equals(containerType)) {
+        } else if (KieDroolsWorkbenchType.INSTANCE.equals(containerType)) {
             return Images.INSTANCE.drools().getSafeUri();
-        } else if (KieImageTypeManager.KIE_SERVER.equals(containerType)) {
+        } else if (KieServerType.INSTANCE.equals(containerType)) {
             return Images.INSTANCE.kie().getSafeUri();
-        } else if (KieImageTypeManager.KIE_WILDFLY.equals(containerType)) {
-            return Images.INSTANCE.wildfly().getSafeUri();
-        }else if (KieImageTypeManager.KIE_EAP.equals(containerType)) {
-            return Images.INSTANCE.jbossEAP().getSafeUri();
-        }else if (KieImageTypeManager.KIE_TOMCAT.equals(containerType)) {
-            return Images.INSTANCE.tomcat().getSafeUri();
-        }else if (KieImageTypeManager.KIE_H2_IN_MEMORY.equals(containerType)) {
-            return Images.INSTANCE.h2().getSafeUri();
-        }else if (KieImageTypeManager.KIE_MYSQL.equals(containerType)) {
-            return Images.INSTANCE.mysql().getSafeUri();
-        } else if (KieImageTypeManager.KIE_POSTGRESQL.equals(containerType)) {
-            return Images.INSTANCE.postgresql().getSafeUri();
-        } else if (KieImageTypeManager.KIE_UF_DASHBUILDER.equals(containerType)) {
+        } else if (UfDashbuilderType.INSTANCE.equals(containerType)) {
             return Images.INSTANCE.dashbuilderLogo().getSafeUri();
-        }
+        } else if (WildflyType.INSTANCE.equals(containerType)) {
+            return Images.INSTANCE.wildfly().getSafeUri();
+        }else if (EAPType.INSTANCE.equals(containerType)) {
+            return Images.INSTANCE.jbossEAP().getSafeUri();
+        }else if (TomcatType.INSTANCE.equals(containerType)) {
+            return Images.INSTANCE.tomcat().getSafeUri();
+        }else if (H2Type.INSTANCE.equals(containerType)) {
+            return Images.INSTANCE.h2().getSafeUri();
+        }else if (MySQLType.INSTANCE.equals(containerType)) {
+            return Images.INSTANCE.mysql().getSafeUri();
+        } else if (PostgreSQLType.INSTANCE.equals(containerType)) {
+            return Images.INSTANCE.postgresql().getSafeUri();
+        } 
 
         return Images.INSTANCE.dockerIcon().getSafeUri();
-    }
-    
-    public static Map<String, String> toMap(final List<KieContainerPort> ports) {
-        if (ports == null) return  null;
-        
-        final Map<String, String> result = new LinkedHashMap<String, String>();
-        for (final KieContainerPort port : ports) {
-            final int privatePort = port.getPrivatePort();
-            final int publicPort = port.getPublicPort();
-            result.put(Integer.toString(privatePort), Integer.toString(publicPort));
-        }
-        return result;
     }
     
     public static List<Map.Entry<String, String>> toMapEntries(final List<KieContainerPort> ports) {
@@ -230,5 +233,31 @@ public class ClientUtils {
             }
         }
         return iconTooltip;
+    }
+    
+    public static String getDbmsImageName(final KieImageType dbmsType, final Settings settings) {
+        if (dbmsType != null) {
+            if (dbmsType.equals(MySQLType.INSTANCE)) {
+                return settings.getMysqlImage();
+            } else if (dbmsType.equals(PostgreSQLType.INSTANCE)) {
+                return settings.getPostgresImage();
+            }
+        }
+        return null;
+    }
+    
+    public static Date parseImageDateTag(final String dateTagged) {
+        if (dateTagged == null || dateTagged.trim().length() == 0) return null;
+        return IMAGE_TAG_DATE_FORMAT.parse(dateTagged);
+    }
+    
+    public static String formatImageDateTag(final Date date) {
+        if (date == null) return null;
+        return DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM).format(date);
+    }
+
+    public static String formatImageDateTag(final Date date, final String pattern) {
+        if (date == null) return null;
+        return DateTimeFormat.getFormat(pattern).format(date);
     }
 }

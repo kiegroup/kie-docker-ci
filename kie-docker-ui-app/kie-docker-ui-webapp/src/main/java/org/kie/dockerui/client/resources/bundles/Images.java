@@ -90,6 +90,9 @@ public interface Images extends ClientBundle {
     
     @Source("images/internet_icon.png")
     ImageResource internetIcon();
+    
+    @Source("images/download-icon.png")
+    ImageResource downloadIcon();
 
     @Source("images/text_icon.jpg")
     DataResource textIcon();
@@ -141,5 +144,8 @@ public interface Images extends ClientBundle {
 
     @Source("images/docker_containers.png")
     DataResource dockerContainers();
+
+    @Source("images/calendar_empty_icon.png")
+    DataResource calendarEmptyIcon();
     
 }

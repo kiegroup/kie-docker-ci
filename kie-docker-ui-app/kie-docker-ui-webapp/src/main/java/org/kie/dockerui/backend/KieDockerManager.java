@@ -28,16 +28,35 @@ public class KieDockerManager {
         LOGGER.info("Initializing KIE Docker UI application....");
         
         // Run the status manager, using daemon mode or just a single run.
-        if (isStatusManagerDaemon()) {
-            runStatusManagerAsDaemon();
+        if (isStatusManagerEnabled()) {
+            initStatusManager();
         } else {
-            runStatusManager();
+            disableStatusManager();
         }
 
         LOGGER.info("Initialization of KIE Docker UI application completed!");
     }
 
     public void shutdown() {
+        if (isStatusManagerEnabled()) {
+            shutdownStatusManager();
+        }
+    }
+    
+    
+    private void disableStatusManager() {
+        statusManager.disable();
+    }
+    
+    private void initStatusManager() {
+        if (isStatusManagerDaemon()) {
+            runStatusManagerAsDaemon();
+        } else {
+            runStatusManager();
+        }
+    }
+
+    private void shutdownStatusManager() {
         if (isStatusManagerDaemon()) {
             LOGGER.info("Shutting down the Status Manager daemon.");
             statusManager.shutdown();
@@ -56,6 +75,11 @@ public class KieDockerManager {
         LOGGER.info("Status Manager will perform a single run .");
         statusManager.run();
     }
+    
+    private boolean isStatusManagerEnabled() {
+        Settings settings = settingsService.getSettings();
+        return settings.isStatusManagerEnabled();
+    } 
     
     private boolean isStatusManagerDaemon() {
         Settings settings = settingsService.getSettings();

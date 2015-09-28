@@ -2,7 +2,10 @@ package org.kie.dockerui.client.service;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import org.kie.dockerui.shared.model.*;
+import org.kie.dockerui.shared.model.KieContainer;
+import org.kie.dockerui.shared.model.KieContainerDetails;
+import org.kie.dockerui.shared.model.KieImage;
+import org.kie.dockerui.shared.model.KieListCommandResponse;
 
 import java.util.Collection;
 import java.util.List;
@@ -38,6 +41,4 @@ public interface DockerService extends RemoteService {
 
     String create(String image, String name, String[] env, String[] linking);
     
-    KieDockerSummary summary();
-
 }

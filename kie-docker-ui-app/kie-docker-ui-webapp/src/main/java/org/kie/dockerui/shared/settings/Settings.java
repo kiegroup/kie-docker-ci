@@ -14,28 +14,14 @@ public class Settings implements IsSerializable{
     private String kieRepositoryName;
     private String artifactsPath;
     private String jenkinsJobURL;
+    private boolean isStatusManagerEnabled;
     private boolean pullEnabled;
     private long pullInterval;
+    private String mysqlImage;
+    private String postgresImage;
 
     public Settings() {
         
-    }
-
-    public Settings(final String protocol, final String privateHost, String publicHost, final String user, final int restApiPort,
-                    final boolean registryEnabled, final int registryPort, final String kieRepositoryName, final String artifactsPath, final String jenkinsJobURL,
-                    final boolean pullEnabled, final long pullInterval) {
-        this.protocol = protocol;
-        this.privateHost = privateHost;
-        this.publicHost = publicHost;
-        this.user = user;
-        this.restApiPort = restApiPort;
-        this.registryEnabled = registryEnabled;
-        this.registryPort = registryPort;
-        this.kieRepositoryName = kieRepositoryName;
-        this.artifactsPath = artifactsPath;
-        this.jenkinsJobURL = jenkinsJobURL;
-        this.pullEnabled = pullEnabled;
-        this.pullInterval = pullInterval;
     }
 
     public String getPrivateHost() {
@@ -118,11 +104,43 @@ public class Settings implements IsSerializable{
         this.jenkinsJobURL = jenkinsJobURL;
     }
 
+    public boolean isStatusManagerEnabled() {
+        return isStatusManagerEnabled;
+    }
+
+    public void setIsStatusManagerEnabled(boolean isStatusManagerEnabled) {
+        this.isStatusManagerEnabled = isStatusManagerEnabled;
+    }
+
+    public void setPullEnabled(boolean pullEnabled) {
+        this.pullEnabled = pullEnabled;
+    }
+
+    public void setPullInterval(long pullInterval) {
+        this.pullInterval = pullInterval;
+    }
+
     public boolean isPullEnabled() {
         return pullEnabled;
     }
 
     public long getPullInterval() {
         return pullInterval;
+    }
+
+    public String getMysqlImage() {
+        return mysqlImage;
+    }
+
+    public void setMysqlImage(String mysqlImage) {
+        this.mysqlImage = mysqlImage;
+    }
+
+    public String getPostgresImage() {
+        return postgresImage;
+    }
+
+    public void setPostgresImage(String postgresImage) {
+        this.postgresImage = postgresImage;
     }
 }

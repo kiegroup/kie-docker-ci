@@ -6,6 +6,7 @@ import org.kie.dockerui.backend.KieStatusManager;
 import org.kie.dockerui.backend.service.DockerServiceImpl;
 import org.kie.dockerui.shared.KieImageTypeManager;
 import org.kie.dockerui.shared.model.*;
+import org.kie.dockerui.shared.model.impl.OthersType;
 import org.kie.dockerui.shared.util.SharedUtils;
 
 import java.util.*;
@@ -53,7 +54,7 @@ public class KieDockerArtifactBuilder {
         if (kieAppType != null) type = kieAppType;
         if (appServerType != null && type != null) types.add(appServerType);
         else type = appServerType;
-        if (type == null) type = KieImageTypeManager.KIE_OTHER;
+        if (type == null) type = OthersType.INSTANCE;
         kieImage.setType(type);
         if (!types.isEmpty()) kieImage.setSubTypes(types);
 
@@ -69,12 +70,19 @@ public class KieDockerArtifactBuilder {
     }
     
     public static KieContainer build(Container container) {
-        if (container == null) return null;
+        if (container == null || container.getId() == null || 
+                container.getNames() == null || container.getNames().length == 0) {
+            // If container is being started just when querying it, or not id or name assigned, do not build the instance.
+            return null;
+        }
         
         KieContainer kieContainer = new KieContainer();
         kieContainer.setId(container.getId());
         kieContainer.setTruncId(container.getId().substring(0, 12));
         kieContainer.setImage(container.getImage());
+        if (container.getNames() != null) {
+            
+        }
         final String cName = container.getNames()[0];
         kieContainer.setName(cName.substring(1, cName.length()));
         kieContainer.setCommand(container.getCommand());
@@ -108,8 +116,12 @@ public class KieDockerArtifactBuilder {
 
         KieImageType dbmsType = null;
         if (SharedUtils.supportsDatabase(kieAppType)) {
-            dbmsType = KieImageTypeManager.getDBMSType(container.getId(), kieContainer.getRepository(), new String[]{kieContainer.getTag()},
-                    dockerService.inspect(container.getId()));    
+            // Try to obtain the DBMS used in this container by its name, to avoid inspecting the container and firing new request.
+            dbmsType = parseDbmsType(kieContainer.getName());
+            if (dbmsType == null) {
+                // Container name does not provide the DBMS type used, try to find out it by inspecting the container. 
+                dbmsType = KieImageTypeManager.getDBMSType(kieContainer.getRepository(), dockerService.inspect(container.getId()));
+            }
         }
         
         KieImageType type = null;
@@ -118,7 +130,7 @@ public class KieDockerArtifactBuilder {
         if (appServerType != null && type != null) types.add(appServerType);
         else type = appServerType;
         if (dbmsType != null && type != null) types.add(dbmsType);
-        if (type == null) type = KieImageTypeManager.KIE_OTHER;
+        if (type == null) type = OthersType.INSTANCE;
         kieContainer.setType(type);
         if (!types.isEmpty()) kieContainer.setSubTypes(types);
 
@@ -134,7 +146,21 @@ public class KieDockerArtifactBuilder {
         
         return kieContainer;
     }
+    
+    
+    private static KieImageType parseDbmsType(final String containerName) {
+        if (containerName != null || containerName.trim().length() >= 0) {
+            final int minusIndex = containerName.lastIndexOf("-");
+            if (minusIndex > -1) {
+                final String dbmsId = containerName.substring(containerName.lastIndexOf("-") + 1, containerName.length());
+                return KieImageTypeManager.getImageTypeById(dbmsId);
+            }
+        }
 
+        return null;
+    }
+    
+    
     /**
      * Create an image name with a tag. If a tag is provided (i.e. is not null) then this tag is used.
      * Otherwise the tag of the provided name is used (if any).

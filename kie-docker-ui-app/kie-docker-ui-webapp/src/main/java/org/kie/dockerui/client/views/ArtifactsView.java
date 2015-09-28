@@ -38,6 +38,7 @@ import org.kie.dockerui.shared.model.KieArtifact;
 import org.kie.dockerui.shared.settings.Settings;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -206,7 +207,6 @@ public class ArtifactsView extends Composite {
         artifactsGrid.setColumnWidth(timestampColumn, 5, Style.Unit.PCT);
 
         // Download artifact button.
-        // Pull image.
         final Column<KieArtifact, String> downloadColumn = new Column<KieArtifact, String>(
                 new ButtonCell()) {
             @Override
@@ -227,11 +227,9 @@ public class ArtifactsView extends Composite {
     
     private void fireDownload(final KieArtifact artifact) {
         if (artifact == null || artifact.getAbsoluteFilePath() == null) return;
-        final String downloadURL = ClientUtils.getDownloadURL(artifact, getSettings());
-        if (downloadURL != null) {
-            GWT.log("Downloading artifact using URL = '" + downloadURL + "'");
-            Window.open(downloadURL,"_blank","");
-        }
+        final String downloadURL = ClientUtils.getDownloadURL(artifact);
+        GWT.log("Downloading artifact using URL = '" + downloadURL + "'");
+        Window.open(downloadURL,"_blank","");
     }
 
     /**
@@ -269,7 +267,7 @@ public class ArtifactsView extends Composite {
                     for (final KieArtifact kieArtifact : kieArtifacts) {
                         addArtifact(kieArtifact);
                     }
-                    artifacts = new ArrayList<KieArtifact>(gridProvider.getList());
+                    setArtifacts(gridProvider.getList());
                     redrawTable();
                     hideLoadingView();
                 }
@@ -278,7 +276,7 @@ public class ArtifactsView extends Composite {
             }
         });
     }
-
+    
     @UiHandler( "searchButton" )
     public void onSearch( final ClickEvent event ) {
         doSearch();
@@ -289,6 +287,20 @@ public class ArtifactsView extends Composite {
         cleanSearch();
     }
 
+    private void setArtifacts(final List<KieArtifact> list) {
+        artifacts = new ArrayList<KieArtifact>(list);
+        Collections.sort(list, artifactsComparator);
+    }
+
+    private final Comparator<KieArtifact> artifactsComparator = new Comparator<KieArtifact>() {
+        @Override
+        public int compare(KieArtifact o1, KieArtifact o2) {
+            final String ts1 = o1.getTimestamp();
+            final String ts2 = o2.getTimestamp();
+            return ts2.compareTo(ts1);
+        }
+    };
+    
     private void doSearch() {
         final String searchPattern = searchBox.getText();
         if (searchPattern == null || searchPattern.trim().length() == 0) {

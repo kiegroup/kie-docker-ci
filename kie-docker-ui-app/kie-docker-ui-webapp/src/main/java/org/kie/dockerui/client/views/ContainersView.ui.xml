@@ -2,7 +2,10 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
-             xmlns:k="urn:import:org.kie.dockerui.client.widgets"
+             xmlns:w="urn:import:org.kie.dockerui.client.widgets"
+             xmlns:c="urn:import:org.kie.dockerui.client.widgets.container"
+             xmlns:n="urn:import:org.kie.dockerui.client.widgets.container.navigator"
+             xmlns:e="urn:import:org.kie.dockerui.client.widgets.container.explorer"
     >
 
   <ui:with field="i18n" type="org.kie.dockerui.client.resources.i18n.Constants"/>
@@ -42,16 +45,16 @@
       overflow: hidden;
     }
     .kieContainersNavigatorPanel {
-        width: 80%;
+        width: 100%;
     }
   </ui:style>
   
   <g:FlowPanel addStyleNames="{style.mainPanel} " ui:field="mainPanel" >
 
     <!-- Loading panel. -->
-    <k:TimeoutPopupPanel ui:field="loadingPanel" autoHideEnabled="false" modal="true" glassEnabled="true">
+    <w:TimeoutPopupPanel ui:field="loadingPanel" autoHideEnabled="false" modal="true" glassEnabled="true">
       <g:HTML text="{i18n.loading}..."/>
-    </k:TimeoutPopupPanel>
+    </w:TimeoutPopupPanel>
     
     <g:FlowPanel ui:field="viewModeButtonsPanel" addStyleNames="{style.viewModeButtonsPanel}">
       <b:ButtonGroup toggle="radio">
@@ -70,27 +73,28 @@
       <g:FlowPanel ui:field="containersPanel">
 
         <!-- Containers navigator. -->
-        <g:HorizontalPanel horizontalAlignment="ALIGN_CENTER" ui:field="kieContainersNavigatorPanel" addStyleNames="{style.kieContainersNavigatorPanel}">
+        <g:HorizontalPanel horizontalAlignment="ALIGN_CENTER" addStyleNames="{style.kieContainersNavigatorPanel}">
           <g:cell width="100%" horizontalAlignment="ALIGN_CENTER">
-            <k:KieContainersNavigator ui:field="kieContainersNavigator"/>
+            <n:KieContainersNavigator ui:field="kieContainersNavigator"/>
           </g:cell>
         </g:HorizontalPanel>
+        
 
         <!-- Containers explorer. -->
         <g:FlowPanel ui:field="kieContainersListPanel">
-          <k:KieContainersExplorer ui:field="kieContainersExplorer"/>
+          <e:KieContainersExplorer ui:field="kieContainersExplorer"/>
         </g:FlowPanel>
 
       </g:FlowPanel>
 
       <!-- Container logs. -->
       <g:FlowPanel ui:field="logsPanel" addStyleNames="{style.logsPanel} ">
-        <k:KieContainerLogs ui:field="logsWidget" addStyleNames="{style.logsWidget}"/>
+        <c:KieContainerLogs ui:field="logsWidget" addStyleNames="{style.logsWidget}"/>
       </g:FlowPanel>
 
       <!-- Start a new container panel. -->
       <g:FlowPanel ui:field="startContainerPanel" addStyleNames="{style.startContainerPanel}">
-        <k:KieContainerStart ui:field="startContainerWidget"/>
+        <c:KieContainerStart ui:field="startContainerWidget"/>
       </g:FlowPanel>
 
     </g:FlowPanel>

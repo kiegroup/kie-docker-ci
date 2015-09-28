@@ -22,21 +22,15 @@ import org.kie.dockerui.client.service.SettingsService;
 import org.kie.dockerui.client.service.SettingsServiceAsync;
 import org.kie.dockerui.client.views.ArtifactsView;
 import org.kie.dockerui.client.views.ContainersView;
-import org.kie.dockerui.client.views.HomeView;
 import org.kie.dockerui.client.views.ImagesView;
 import org.kie.dockerui.shared.model.KieContainer;
 import org.kie.dockerui.shared.model.KieImage;
 import org.kie.dockerui.shared.settings.Settings;
 
-import java.util.LinkedList;
 import java.util.List;
 
-/**
- * NOTE: Home has been disabled. Used containers view as home.
- */
 public class DockerUIEntryPoint implements EntryPoint {
 
-    private HomeView homeView = null;
     private ImagesView imagesView = null;
     private ContainersView containersView = null;
     private ArtifactsView artifactsView = null;
@@ -46,18 +40,6 @@ public class DockerUIEntryPoint implements EntryPoint {
         @Override
         public void onShowContainers(final ImagesView.ShowContainersEvent event) {
             showContainersView(event.getContainers());   
-        }
-    };
-    
-    private final HomeView.ShowImageEventHandler homeViewShowImageHandler = new HomeView.ShowImageEventHandler() {
-        @Override
-        public void onShowImage(final HomeView.ShowImageEvent event) {
-            final KieImage i = event.getImage();
-            if (i != null) {
-                final List<KieImage> list = new LinkedList<KieImage>();
-                list.add(i);
-                showImagesView(list);
-            }
         }
     };
     
@@ -81,7 +63,6 @@ public class DockerUIEntryPoint implements EntryPoint {
                         final Panel mainPanel = createView();
                         RootPanel.get().add(mainPanel);
 
-                        
                         // By default, show containers view.
                         showContainersView();
                         hideLoadingPopup();
@@ -101,8 +82,6 @@ public class DockerUIEntryPoint implements EntryPoint {
     };
     
     private Panel createView() {
-        /*homeView = new HomeView();
-        homeView.addShowImageEventHandler(homeViewShowImageHandler);*/
         imagesView = new ImagesView();
         imagesView.addShowContainersEventHandler(showContainersEventHandler);
         containersView = new ContainersView();
@@ -145,12 +124,6 @@ public class DockerUIEntryPoint implements EntryPoint {
         // Top Menu.
         final MenuBar topMenu = new MenuBar(false);
         topMenu.setAnimationEnabled(true);
-        /*topMenu.addItem(Constants.INSTANCE.home(), new Command() {
-            @Override
-            public void execute() {
-                showHomeView();
-            }
-        });*/
         topMenu.addItem(Constants.INSTANCE.containers(), new Command() {
             @Override
             public void execute() {
@@ -190,12 +163,6 @@ public class DockerUIEntryPoint implements EntryPoint {
         return mainPanel;
     }
 
-    private void showHomeView() {
-        hideViews();
-        homeView.setVisible(true);
-        homeView.show();
-    }
-    
     private void showImagesView() {
         hideViews();
         imagesView.setVisible(true);
@@ -228,7 +195,6 @@ public class DockerUIEntryPoint implements EntryPoint {
 
     private void hideViews() {
         imagesView.setVisible(false);
-        // homeView.setVisible(false);
         containersView.setVisible(false);
         artifactsView.setVisible(false);
     }

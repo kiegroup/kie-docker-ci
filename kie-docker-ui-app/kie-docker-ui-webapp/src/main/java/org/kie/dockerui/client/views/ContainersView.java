@@ -9,13 +9,24 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.kie.dockerui.client.KieClientManager;
 import org.kie.dockerui.client.Log;
 import org.kie.dockerui.client.resources.i18n.Constants;
-import org.kie.dockerui.client.widgets.*;
+import org.kie.dockerui.client.service.SettingsClientHolder;
+import org.kie.dockerui.client.util.ClientUtils;
+import org.kie.dockerui.client.widgets.TimeoutPopupPanel;
+import org.kie.dockerui.client.widgets.container.KieContainerDetails;
+import org.kie.dockerui.client.widgets.container.KieContainerLogs;
+import org.kie.dockerui.client.widgets.container.KieContainerStart;
+import org.kie.dockerui.client.widgets.container.explorer.KieContainersExplorer;
+import org.kie.dockerui.client.widgets.container.navigator.KieContainersNavigator;
 import org.kie.dockerui.shared.model.KieContainer;
 import org.kie.dockerui.shared.model.KieContainerStartArguments;
+import org.kie.dockerui.shared.model.KieImage;
 import org.kie.dockerui.shared.model.KieImageType;
 import org.kie.dockerui.shared.util.SharedUtils;
 
@@ -80,9 +91,6 @@ public class ContainersView extends Composite {
     KieContainerStart startContainerWidget;
     
     @UiField
-    HorizontalPanel kieContainersNavigatorPanel;
-    
-    @UiField
     FlowPanel kieContainersListPanel;
 
     final KieContainerDetails detailsWidget;
@@ -113,13 +121,20 @@ public class ContainersView extends Composite {
         kieContainersNavigator.addShowContainerEventHandler(new KieContainersNavigator.ShowContainersEventHandler() {
             @Override
             public void onShowContainers(KieContainersNavigator.ShowContainersEvent event) {
-                filterExplorer(event.isAll(), event.getContainers());
+                final boolean isAll = event.isAll();
+                final List<KieContainer> containers = event.getContainers();
+                
+                if (!isAll && ( containers == null || containers.isEmpty()) ) {
+                    hideExplorer();
+                } else {
+                    filterExplorer(isAll, containers);
+                }
             }
         });
         kieContainersNavigator.addCreateContainerEventHandler(new KieContainersNavigator.CreateContainerEventHandler() {
             @Override
             public void onCreateContainer(KieContainersNavigator.CreateContainerEvent event) {
-                showStartContainer(event.getImage(), event.getDbImage());
+                showStartContainer(event.getImage(), event.getTag(), event.getDbImageType());
             }
         });
         kieContainersExplorer.addShowContainerLogsEventHandler(new KieContainersExplorer.ShowContainerLogsEventHandler() {
@@ -194,10 +209,18 @@ public class ContainersView extends Composite {
     private void filterExplorer(final boolean isAll, final List<KieContainer> containers) {
         if (!isAll) kieContainersExplorer.show(containers);
         else kieContainersExplorer.show();
+        showExplorer();
+    }
+    
+    private void hideExplorer() {
+        kieContainersExplorer.setVisible(false);
+    }
+
+    private void showExplorer() {
+        kieContainersExplorer.setVisible(true);
     }
 
     private void showLogs(final KieContainer container) {
-        logsPanel.setTitle(Constants.INSTANCE.logsForContainer() + " " + container.getId());
         startContainerPanel.setVisible(false);
         containersPanel.setVisible(false);
         logsPanel.setVisible(true);
@@ -218,23 +241,24 @@ public class ContainersView extends Composite {
         detailsWidget.show(container);
     }
 
-    private void showStartContainer(final String image, final String dbImage) {
-        final List<KieImageType> selectedTypes = kieContainersNavigator.getSelectedTypes();
-        final KieImageType kieType = selectedTypes.get(0);
-
-        KieImageType dbType = null;
-        String dbImageName = null;
-        if (dbImage != null) {
-            dbType = selectedTypes.get(selectedTypes.size() - 1);
-            dbImageName = dbType.getId();
-            
+    private void showStartContainer(final KieImage image, final String tag, final KieImageType dbImageType) {
+        final String imageName = SharedUtils.getImage(image.getRegistry(), image.getRepository(), tag);
+        String imageKieName = image.getRepository();
+        final int _slashPos = imageKieName.lastIndexOf("/");
+        if (_slashPos > -1) {
+            imageKieName = imageKieName.substring(_slashPos + 1, imageKieName.length());
         }
-        final String imageName = SharedUtils.getRepository(image);
-        final String _i = dbImageName != null ? imageName + "-" + dbImageName : imageName;
-        final String _d = dbImageName != null ? dbImageName + "-" + imageName : null;
-        final KieContainerStartArguments arguments = new KieContainerStartArguments(kieType, image, 
-                _i, dbType, dbImage, _d, null);
-        startContainerPanel.setTitle(Constants.INSTANCE.createAndStartKieContainer() + " " + _i);
+        imageKieName = imageKieName + "-" + tag;
+        final String containerName = dbImageType != null ? imageKieName + "-" + dbImageType.getId() : imageKieName;
+        String dbContainerImage = null;
+        String dbContainerName = null;
+        if(dbImageType != null) {
+            dbContainerImage = ClientUtils.getDbmsImageName(dbImageType, SettingsClientHolder.getInstance().getSettings());
+            dbContainerName = dbImageType.getId() + "-" + imageKieName;
+        }
+        final KieContainerStartArguments arguments = new KieContainerStartArguments(image.getType(), imageName,
+                containerName, dbImageType, dbContainerImage, dbContainerName, null);
+        startContainerPanel.setTitle(Constants.INSTANCE.createAndStartKieContainer() + " " + containerName);
         logsPanel.setVisible(false);
         containersPanel.setVisible(false);
         startContainerPanel.setVisible(true);
@@ -247,6 +271,7 @@ public class ContainersView extends Composite {
         hideLoadingView();
         kieContainersNavigator.clear();
         kieContainersExplorer.clear();
+        showExplorer();
         backButton.setVisible(false);
         startContainerWidget.clear();
         startContainerPanel.setVisible(false);

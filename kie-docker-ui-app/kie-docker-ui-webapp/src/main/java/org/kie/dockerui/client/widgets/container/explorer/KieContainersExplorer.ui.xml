@@ -1,0 +1,67 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:c="urn:import:com.google.gwt.user.cellview.client"
+             xmlns:w="urn:import:org.kie.dockerui.client.widgets"
+    >
+
+  <ui:with field="i18n" type="org.kie.dockerui.client.resources.i18n.Constants"/>
+
+  <ui:style type="org.kie.dockerui.client.widgets.container.explorer.KieContainersExplorer.KieContainersExplorerStyle">
+    .mainPanel {
+
+    }
+
+    .containerList {
+
+    }
+
+    .loadingPanel {
+
+    }
+
+    .emptyPanel {
+
+    }
+
+    .containersPanel {
+
+    }
+    
+  </ui:style>
+  
+  <g:HTMLPanel addStyleNames="{style.mainPanel} " ui:field="mainPanel">
+
+    <!-- Loading panel. -->
+    <w:TimeoutPopupPanel ui:field="loadingPanel" autoHideEnabled="false" modal="true" glassEnabled="true" addStyleNames="{style.loadingPanel} ">
+      <g:HTML text="{i18n.loading}..."/>
+    </w:TimeoutPopupPanel>
+    
+    <!-- Empty panel. -->
+    <g:FlowPanel ui:field="emptyPanel" addStyleNames="{style.emptyPanel} ">
+      <g:HTML text="{i18n.noContainers}"/>
+    </g:FlowPanel>
+
+    <g:HTMLPanel ui:field="containersPanel" addStyleNames="{style.containersPanel} ">
+      <table cellspacing='0' cellpadding='0' style='width:100%;'>
+        <tr>
+          <td
+              valign='top'>
+            <b:CellTable
+                addStyleNames='{style.containerList}'
+                pageSize='5'
+                ui:field='containerList' />
+          </td>
+        </tr>
+        <tr>
+          <td align='center'>
+            <c:SimplePager ui:field='pager'/>
+          </td>
+        </tr>
+      </table>
+    </g:HTMLPanel>
+    
+  </g:HTMLPanel>
+  
+</ui:UiBinder>

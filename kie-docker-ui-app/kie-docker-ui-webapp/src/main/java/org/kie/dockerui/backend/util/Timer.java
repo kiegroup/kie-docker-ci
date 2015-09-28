@@ -1,26 +1,19 @@
 package org.kie.dockerui.backend.util;
 
+import org.apache.commons.lang.time.StopWatch;
+
 public class Timer {
-    private long startTime = 0;
-    private long endTime   = 0;
+    private final StopWatch stopWatch = new StopWatch();
 
     public void start(){
-        this.startTime = System.currentTimeMillis();
+        stopWatch.start();
     }
 
     public void end() {
-        this.endTime   = System.currentTimeMillis();
-    }
-
-    public long getStartTime() {
-        return this.startTime;
-    }
-
-    public long getEndTime() {
-        return this.endTime;
+        stopWatch.stop();
     }
 
     public long getTotalTime() {
-        return this.endTime - this.startTime;
+        return stopWatch.getTime();
     }
 }

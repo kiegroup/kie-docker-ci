@@ -1,0 +1,111 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:w="urn:import:org.kie.dockerui.client.widgets"
+    >
+
+  <ui:with field="i18n" type="org.kie.dockerui.client.resources.i18n.Constants"/>
+
+  <ui:style type="org.kie.dockerui.client.widgets.container.KieContainerLogs.KieContainerLogsStyle">
+    .mainPanel {
+
+    }
+
+    .loadingPanel {
+
+    }
+
+    .logsPanel {
+      background-color: grey;
+      line-height: 60%;
+      height: 100%;
+    }
+
+    .accordion {
+      width: 90%;
+    }
+
+    .detailsActionsPanel {
+      width: 100%;
+    }
+
+    .refreshPanel {
+      width: 10%;
+    }
+
+    .playButton {
+
+    }
+
+    .stopButton {
+      float: left;
+    }
+
+    .logText {
+      margin-left: 10px;
+    }
+    .timeOutPopupCounterPanel {
+      position: absolute;
+      top: 0;
+      left:0;
+      z-index: 1000;
+      margin-top: 50px;
+      padding: 10px;
+      background-color: aliceblue;
+    }
+    .timeOutPopupCounterText {
+      font-weight: bold;
+      font-style: italic;
+    }
+  </ui:style>
+  
+  <g:FlowPanel addStyleNames="{style.mainPanel} " ui:field="mainPanel">
+
+    <w:TimeoutPopupPanel ui:field="loadingPanel" autoHideEnabled="false" modal="true" glassEnabled="true" addStyleNames="{style.loadingPanel} ">
+      <g:HTML text="{i18n.loading}..."/>
+    </w:TimeoutPopupPanel>
+
+    <g:FlowPanel ui:field="timeOutPopupCounterPanel" visible="false" addStyleNames="{style.timeOutPopupCounterPanel}">
+      <g:HTML ui:field="timeOutPopupCounterText" addStyleNames="{style.timeOutPopupCounterText}"/>
+    </g:FlowPanel>
+    
+    <g:HorizontalPanel addStyleNames="{style.detailsActionsPanel}">
+
+      <!-- Container information. -->
+      <g:cell width="90%">
+        <b:Accordion addStyleNames="{style.accordion} ">
+          <b:AccordionGroup ui:field="infoAccordionGroup" defaultOpen="false">
+            <b:Heading size="5" text="{i18n.containerId}"/>
+            <b:WellForm>
+              <g:HTML ui:field="infoContainerId"/>
+            </b:WellForm>
+            <b:Heading size="5" text="{i18n.containerImage}"/>
+            <b:WellForm>
+              <g:HTML ui:field="infoContainerImage"/>
+            </b:WellForm>
+            <b:Heading size="5" text="{i18n.containerName}"/>
+            <b:WellForm>
+              <g:HTML ui:field="infoContainerName"/>
+            </b:WellForm>
+          </b:AccordionGroup>
+        </b:Accordion>
+      </g:cell>
+
+      <!-- Refresh buttons. -->
+      <g:cell width="90%">
+        <g:FlowPanel addStyleNames="{style.refreshPanel}">
+          <b:Image ui:field="playButton" altText="{i18n.refreshPlay}" title="{i18n.refreshPlay}" addStyleNames="{style.playButton}"/>
+          <b:Image ui:field="stopButton" altText="{i18n.refreshStop}" title="{i18n.refreshStop}" addStyleNames="{style.stopButton}"/>
+        </g:FlowPanel>
+      </g:cell>
+      
+    </g:HorizontalPanel>
+    
+    <g:ScrollPanel ui:field="logsPanel" addStyleNames="{style.logsPanel}">
+      <g:HTML ui:field="logText" addStyleNames="{style.logText}"/>
+    </g:ScrollPanel>
+    
+  </g:FlowPanel>
+  
+</ui:UiBinder>

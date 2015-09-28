@@ -1,9 +1,11 @@
 package org.kie.dockerui.shared.util;
 
-import org.kie.dockerui.shared.KieImageTypeManager;
 import org.kie.dockerui.shared.model.KieContainer;
 import org.kie.dockerui.shared.model.KieContainerPort;
 import org.kie.dockerui.shared.model.KieImageType;
+import org.kie.dockerui.shared.model.impl.H2Type;
+import org.kie.dockerui.shared.model.impl.MySQLType;
+import org.kie.dockerui.shared.model.impl.PostgreSQLType;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,40 +24,40 @@ public class DatabaseUtils {
     }
 
     public static String getDriver(final KieImageType type) {
-        if (KieImageTypeManager.KIE_MYSQL.equals(type)) return "mysql";
-        if (KieImageTypeManager.KIE_POSTGRESQL.equals(type)) return "postgres";
-        if (KieImageTypeManager.KIE_H2_IN_MEMORY.equals(type)) return "h2";
+        if (MySQLType.INSTANCE.equals(type)) return "mysql";
+        if (PostgreSQLType.INSTANCE.equals(type)) return "postgres";
+        if (H2Type.INSTANCE.equals(type)) return "h2";
         return null;
     }
     
     public static String getAlias(final KieImageType type) {
-        if (KieImageTypeManager.KIE_MYSQL.equals(type)) return "mysql";
-        if (KieImageTypeManager.KIE_POSTGRESQL.equals(type)) return "postgres";
+        if (MySQLType.INSTANCE.equals(type)) return "mysql";
+        if (PostgreSQLType.INSTANCE.equals(type)) return "postgres";
         return null;
     }
 
     public static String getConnectionUser(final KieImageType type) {
-        if (KieImageTypeManager.KIE_MYSQL.equals(type)) return "root";
-        if (KieImageTypeManager.KIE_POSTGRESQL.equals(type)) return "postgres";
+        if (MySQLType.INSTANCE.equals(type)) return "root";
+        if (PostgreSQLType.INSTANCE.equals(type)) return "postgres";
         return "sa";
     }
 
     public static String getConnectionPassword(final KieImageType type) {
-        if (KieImageTypeManager.KIE_MYSQL.equals(type)) return "mysql";
-        if (KieImageTypeManager.KIE_POSTGRESQL.equals(type)) return "postgres";
+        if (MySQLType.INSTANCE.equals(type)) return "mysql";
+        if (PostgreSQLType.INSTANCE.equals(type)) return "postgres";
         return "sa";
     }
     
     public static String[] buildPasswordEnvVar(final KieImageType type) {
         String pass = getConnectionPassword(type);
-        if (KieImageTypeManager.KIE_MYSQL.equals(type)) return new String[] {"MYSQL_ROOT_PASSWORD", pass};
-        if (KieImageTypeManager.KIE_POSTGRESQL.equals(type)) return new String[] {"POSTGRES_PASSWORD", pass};
+        if (MySQLType.INSTANCE.equals(type)) return new String[] {"MYSQL_ROOT_PASSWORD", pass};
+        if (PostgreSQLType.INSTANCE.equals(type)) return new String[] {"POSTGRES_PASSWORD", pass};
         return null;
     }
 
     public static int getDefaultPort(final KieImageType type) {
-        if (KieImageTypeManager.KIE_MYSQL.equals(type)) return 3306;
-        if (KieImageTypeManager.KIE_POSTGRESQL.equals(type)) return 5432;
+        if (MySQLType.INSTANCE.equals(type)) return 3306;
+        if (PostgreSQLType.INSTANCE.equals(type)) return 5432;
         return -1;
     }
 
@@ -76,22 +78,9 @@ public class DatabaseUtils {
         return -1;
     }
     
-    public static int getPublicPort(final int port, final KieContainer container) {
-        if (container != null) {
-            List<KieContainerPort> ports = container.getPorts();
-            if (ports != null) {
-                for (final KieContainerPort _port : ports) {
-                    if (_port.getPrivatePort() == port) return _port.getPublicPort();
-                }
-            }
-        }
-
-        return -1;
-    }
-
     public static String getJdbcUrl(final KieImageType type, final String host , final int port, final String dbName) {
-        if (KieImageTypeManager.KIE_MYSQL.equals(type)) return "jdbc:mysql://" + host + ":" + port + "/" + dbName;
-        if (KieImageTypeManager.KIE_POSTGRESQL.equals(type)) return "jdbc:postgresql://" + host + ":" + port + "/" + dbName;
+        if (MySQLType.INSTANCE.equals(type)) return "jdbc:mysql://" + host + ":" + port + "/" + dbName;
+        if (PostgreSQLType.INSTANCE.equals(type)) return "jdbc:postgresql://" + host + ":" + port + "/" + dbName;
         return "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
     }
 

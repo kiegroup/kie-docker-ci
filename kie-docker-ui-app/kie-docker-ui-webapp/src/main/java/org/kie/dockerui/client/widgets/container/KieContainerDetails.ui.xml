@@ -1,0 +1,264 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+             xmlns:w="urn:import:org.kie.dockerui.client.widgets"
+    >
+
+  <ui:with field="i18n" type="org.kie.dockerui.client.resources.i18n.Constants"/>
+
+  <ui:style type="org.kie.dockerui.client.widgets.container.KieContainerDetails.KieContainerDetailsStyle">
+    .mainPanel {
+
+    }
+
+    .loadingPanel {
+
+    }
+
+    .detailsFormPanel {
+
+    }
+
+    .portsGrid {
+      height: 100px;
+      font-size: small;
+      overflow: auto;
+    }
+
+    .envVarsGrid {
+      height: 100px;
+      font-size: small;
+      overflow: auto;
+    }
+
+    .containerSSHCommand {
+      font-size: medium;
+    }
+
+    .clear {
+      clear: both;
+      height: 15px;
+    }
+
+    .artifactVersions {
+      width: 100%;
+      height: 500px;
+    }
+    .pullAddressNotePanel {
+        font-size: small;
+    }
+  </ui:style>
+  
+  <g:FlowPanel addStyleNames="{style.mainPanel} " ui:field="mainPanel">
+
+    <w:TimeoutPopupPanel ui:field="loadingPanel" autoHideEnabled="false" modal="true" glassEnabled="true" addStyleNames="{style.loadingPanel} ">
+      <g:HTML text="{i18n.loading}..."/>
+    </w:TimeoutPopupPanel>
+
+    <g:FlowPanel ui:field="detailsFormPanel" addStyleNames="{style.detailsFormPanel} ">
+
+      <b:Accordion>
+        
+        <!-- Container details group. -->
+        <b:AccordionGroup heading="{i18n.containerDetails}" defaultOpen="true">
+          <b:WellForm addStyleNames="form-horizontal">
+
+            <!-- Container Id. -->
+            <b:ControlGroup>
+              <b:ControlLabel for="inputId" title="{i18n.containerId}"><g:HTML text="{i18n.containerId}"/></b:ControlLabel>
+              <b:Controls>
+                <b:TextBox size="6" alternateSize="XLARGE" b:id="inputId" ui:field="containerId" readOnly="true"></b:TextBox>
+              </b:Controls>
+            </b:ControlGroup>
+
+            <!-- Container Name. -->
+            <b:ControlGroup>
+              <b:ControlLabel for="inputName" title="{i18n.containerName}"><g:HTML text="{i18n.containerName}"/></b:ControlLabel>
+              <b:Controls>
+                <b:TextBox size="6" alternateSize="XLARGE" b:id="inputName" ui:field="containerName" readOnly="true"></b:TextBox>
+              </b:Controls>
+            </b:ControlGroup>
+
+            <!-- Container Image. -->
+            <b:ControlGroup>
+              <b:ControlLabel for="inputImage" title="{i18n.containerImage}"><g:HTML text="{i18n.containerImage}"/></b:ControlLabel>
+              <b:Controls>
+                <b:TextBox size="6" alternateSize="XLARGE" b:id="inputImage" ui:field="containerImage" readOnly="true"></b:TextBox>
+              </b:Controls>
+            </b:ControlGroup>
+
+            <!-- Container status. -->
+            <b:ControlGroup>
+              <b:ControlLabel for="inputStatus" title="{i18n.containerStatus}"><g:HTML text="{i18n.containerStatus}"/></b:ControlLabel>
+              <b:Controls>
+                <b:TextBox size="6" alternateSize="XLARGE" b:id="inputStatus" ui:field="containerStatus" readOnly="true"></b:TextBox>
+              </b:Controls>
+            </b:ControlGroup>
+
+            <!-- Container command. -->
+            <b:ControlGroup>
+              <b:ControlLabel for="inputCommand" title="{i18n.containerCommand}"><g:HTML text="{i18n.containerCommand}"/></b:ControlLabel>
+              <b:Controls>
+                <b:TextBox size="6" alternateSize="XLARGE" b:id="inputCommand" ui:field="containerCommand" readOnly="true"></b:TextBox>
+              </b:Controls>
+            </b:ControlGroup>
+
+            <!-- Container IP. -->
+            <b:ControlGroup>
+              <b:ControlLabel for="inputIp" title="{i18n.containerIP}"><g:HTML text="{i18n.containerIP}"/></b:ControlLabel>
+              <b:Controls>
+                <b:TextBox size="6" alternateSize="XLARGE" b:id="inputIp" ui:field="containerIP" readOnly="true"></b:TextBox>
+              </b:Controls>
+            </b:ControlGroup>
+
+            <!-- Container Ports. -->
+            <b:ControlGroup>
+              <b:ControlLabel title="{i18n.containerPorts}"><g:HTML text="{i18n.containerPorts}"/></b:ControlLabel>
+              <b:Controls>
+                <b:DataGrid ui:field="portsGrid" addStyleNames="{style.portsGrid}"/>
+              </b:Controls>
+            </b:ControlGroup>
+
+            <!-- Container Env variables. -->
+            <b:ControlGroup>
+              <b:ControlLabel title="{i18n.containerEnvVars}"><g:HTML text="{i18n.containerEnvVars}"/></b:ControlLabel>
+              <b:Controls>
+                <b:DataGrid ui:field="envVarsGrid" addStyleNames="{style.envVarsGrid}"/>
+              </b:Controls>
+            </b:ControlGroup>
+
+          </b:WellForm>
+        </b:AccordionGroup>
+
+        <!-- Artifact version. -->
+        <b:AccordionGroup ui:field="artifactVersionsGroup" heading="{i18n.artifactVersions}" defaultOpen="false">
+
+        </b:AccordionGroup>
+        
+        <!-- Container webapp URL. -->
+        <b:AccordionGroup ui:field="webAddressGroup" heading="{i18n.webAddressUrl}" defaultOpen="false">
+          <b:Hero>
+            <b:Heading size="1">URL</b:Heading>
+            <b:Paragraph>Navigate into the webapp at this address:</b:Paragraph>
+            <b:WellForm>
+              <g:Hyperlink ui:field="containerWebAddress"/>
+            </b:WellForm>
+          </b:Hero>
+        </b:AccordionGroup>
+
+        <!-- Container ssh connection command. -->
+        <b:AccordionGroup ui:field="sshCommandGroup" heading="{i18n.sshConnectionCommand}" defaultOpen="false">
+          <b:Hero>
+            <b:Heading size="1">SSH</b:Heading>
+            <b:Paragraph>Copy, paste and run this command in your localhost's shell and you will obtain a remote SSH session into the docker's container:</b:Paragraph>
+            <b:WellForm>
+              <g:HTML ui:field="containerSSHCommand" addStyleNames="{style.containerSSHCommand}"/>
+            </b:WellForm>
+          </b:Hero>
+          <g:HTML text="Once having a container's shell, you can then noodle around it and run your stuff by looking or modifying the application configuration files, etc:"/>
+          
+          <g:FlowPanel addStyleNames="{style.clear}"/>
+          
+          <b:TabPanel tabPosition="above"  >
+
+            <b:Tab heading="Wildfly/EAP based images" active="true">
+              <g:HTML text="Change wildfly or EAP configuration:"/>
+              <b:WellForm>
+                <g:HTML text="cd $JBOSS_HOME/standalone/configuration"/>
+                <g:HTML text="vi standalone-full-kie-wb.xml 	# For kie-wb image"/>
+                <g:HTML text="vi standalone-full-kie-drools-wb.xml 	# For kie-drools-wb image"/>
+                <g:HTML text="vi standalone-full-dashbuilder.xml 	# For UF Dashbuilder image"/>
+              </b:WellForm>
+
+
+              <g:HTML text="Look or modify deployed webapp"/>
+              <b:WellForm>
+                <g:HTML text="cd $JBOSS_HOME/standalone/deployments"/>
+              </b:WellForm>
+
+              <g:HTML text="Run the webapp"/>
+              <b:WellForm>
+                <g:HTML text="cd $JBOSS_HOME/bin"/>
+                <g:HTML text="./start_kie-wb.sh		# For kie-wb image"/>
+                <g:HTML text="./start_kie-drools-wb.sh	# For kie-drools-wb image"/>
+                <g:HTML text="./start_dashbuilder.sh	# For UF Dashbuilder image"/>
+              </b:WellForm>
+            </b:Tab>
+
+            <b:Tab heading="Tomcat based images" active="false">
+              <g:HTML text="Change tomcat configuration:"/>
+              <b:WellForm>
+                <g:HTML text="cd $CATALINA_HOME/conf"/>
+                <g:HTML text="vi context.xml"/>
+                <g:HTML text="vi server.xml"/>
+                <g:HTML text="vi resources.properties"/>
+              </b:WellForm>
+              <g:HTML text="Look or modify deployed webapp:"/>
+              <b:WellForm>
+                <g:HTML text="cd $CATALINA_HOME/webapps"/>
+              </b:WellForm>
+              <g:HTML text="Run the webapp:"/>
+              <b:WellForm>
+                <g:HTML text="cd $CATALINA_HOME/bin"/>
+                <g:HTML text="./start_kie-wb.sh		# For kie-wb image"/>
+                <g:HTML text="./start_kie-drools-wb.sh	# For kie-drools-wb image"/>
+                <g:HTML text="./start_dashbuilder.sh	# For UF Dashbuilder image"/>
+              </b:WellForm>
+            </b:Tab>
+          </b:TabPanel>
+
+        </b:AccordionGroup>
+
+        <!-- Container JBDC information. -->
+        <b:AccordionGroup ui:field="jdbcGroup" heading="{i18n.jdbcInformation}" defaultOpen="false">
+          <b:Hero>
+            <b:Paragraph text="{i18n.jdbcUrl}"/>
+            <b:WellForm>
+              <g:HTML ui:field="jdbcUrl"/>
+            </b:WellForm>
+            <b:Paragraph text="{i18n.user}"/>
+            <b:WellForm>
+              <g:HTML ui:field="jdbcUser"/>
+            </b:WellForm>
+            <b:Paragraph text="{i18n.password}"/>
+            <b:WellForm>
+              <g:HTML ui:field="jdbcPassword"/>
+            </b:WellForm>
+          </b:Hero>
+        </b:AccordionGroup>
+        
+        <!-- Container pull command. -->
+        <b:AccordionGroup ui:field="pullAddressGroup" heading="{i18n.pullCommand}" defaultOpen="false">
+          <b:Hero>
+            <b:Heading size="1">Pull this image</b:Heading>
+            <b:Paragraph>Copy, paste and run this docker command in your local shell to pull this image into your docker host and run it locally:</b:Paragraph>
+            <b:WellForm>
+              <g:HTML ui:field="containerPullAddress"/>
+            </b:WellForm>
+            <g:DisclosurePanel addStyleNames="{style.pullAddressNotePanel}">
+              <g:customHeader>
+                <b:Label type="WARNING">IMPORTANT NOTE</b:Label>
+              </g:customHeader>
+              <g:FlowPanel>
+                <g:HTML>If pulling you hit with this error:</g:HTML>
+                <b:WellForm>
+                  <g:HTML>FATA[0000] Error: v1 ping attempt failed with error: Get https://10.34.34.242:5000/v1/_ping: dial tcp 10.34.34.242:5000: connection refused. If this private registry supports only HTTP or HTTPS with an unknown CA certificate, please add `--insecure-registry 10.34.34.242:5000` to the daemon's arguments. In the case of HTTPS, if you have access to the registry's CA certificate, no need for the flag; simply place the CA certificate at /etc/docker/certs.d/10.34.34.242:5000/ca.crt</g:HTML>
+                </b:WellForm>
+                <g:HTML>Please add the following parameter in your local Docker daemon run script:</g:HTML>
+                <b:WellForm>
+                  <g:HTML>--insecure-registry kieci01-docker.lab.eng.brq.redhat.com:5000</g:HTML>
+                </b:WellForm>
+                <g:InlineHTML><a href="https://docs.docker.com/reference/commandline/cli/#insecure-registries" target="_blank">Official documentation</a></g:InlineHTML>
+              </g:FlowPanel>
+            </g:DisclosurePanel>
+          </b:Hero>
+        </b:AccordionGroup>
+        
+      </b:Accordion>
+          
+    </g:FlowPanel>
+    
+  </g:FlowPanel>
+  
+</ui:UiBinder>

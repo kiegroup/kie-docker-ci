@@ -16,7 +16,6 @@ import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -36,20 +35,17 @@ import org.kie.dockerui.client.service.DockerService;
 import org.kie.dockerui.client.service.DockerServiceAsync;
 import org.kie.dockerui.client.service.SettingsClientHolder;
 import org.kie.dockerui.client.util.ClientUtils;
-import org.kie.dockerui.client.widgets.ClickableImageResourceCell;
-import org.kie.dockerui.client.widgets.ImageTypesCell;
-import org.kie.dockerui.client.widgets.KieCalendar;
 import org.kie.dockerui.client.widgets.TimeoutPopupPanel;
+import org.kie.dockerui.client.widgets.cell.ClickableImageResourceCell;
+import org.kie.dockerui.client.widgets.cell.ImageTypesCell;
+import org.kie.dockerui.client.widgets.util.KieCalendar;
 import org.kie.dockerui.shared.model.KieAppStatus;
 import org.kie.dockerui.shared.model.KieContainer;
 import org.kie.dockerui.shared.model.KieImage;
 import org.kie.dockerui.shared.settings.Settings;
 import org.kie.dockerui.shared.util.SharedUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 
 public class ImagesView extends Composite {
@@ -373,13 +369,31 @@ public class ImagesView extends Composite {
                 new TextCell()) {
             @Override
             public String getValue(final KieImage object) {
-                return DateTimeFormat.getMediumDateTimeFormat().format(object.getCreated());
+                return ClientUtils.formatImageDateTag(object.getCreated());
             }
         };
         creationDateColumn.setSortable(false);
         imagesGrid.addColumn(creationDateColumn, Constants.INSTANCE.imageCreationDate());
         imagesGrid.setColumnWidth(creationDateColumn, 5, Style.Unit.PCT);
 
+        // Download artifact.
+        final Column<KieImage, String> artifactDownloadColumn = new Column<KieImage, String>(
+                new ButtonCell()) {
+            @Override
+            public String getValue(final KieImage object) {
+                return Constants.INSTANCE.download();
+            }
+        };
+        artifactDownloadColumn.setFieldUpdater(new FieldUpdater<KieImage, String>() {
+            @Override
+            public void update(final int index, final KieImage image, final String value) {
+                downloadArtifact(image);
+            }
+        });
+        artifactDownloadColumn.setSortable(false);
+        imagesGrid.addColumn(artifactDownloadColumn, Constants.INSTANCE.downloadWAR());
+        imagesGrid.setColumnWidth(artifactDownloadColumn, 2, Style.Unit.PCT);
+        
         // Explore containers.
         final Column<KieImage, String> containersColumn = new Column<KieImage, String>(
                 new ButtonCell()) {
@@ -445,6 +459,20 @@ public class ImagesView extends Composite {
             fireEvent(new ShowContainersEvent(result));
         }
         
+    }
+
+    private void downloadArtifact(final KieImage image) {
+        // Obtain current settings from client cache.
+        final Settings settings = SettingsClientHolder.getInstance().getSettings();
+        final Set<String> tags = image.getTags();
+        if (tags != null && !tags.isEmpty()) {
+            final String tag = tags.iterator().next();
+            final String downloadURL = ClientUtils.getDownloadURL(settings, image.getType(),
+                    image.getSubTypes() != null && !image.getSubTypes().isEmpty() ? image.getSubTypes().get(0) : null,
+                    tag);
+            GWT.log("Downloading artifact using URL = '" + downloadURL + "'");
+            Window.open(downloadURL,"_blank","");
+        }
     }
     
     private void redrawTable() {

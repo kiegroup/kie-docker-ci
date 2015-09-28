@@ -3,57 +3,30 @@ package org.kie.dockerui.shared;
 import org.kie.dockerui.shared.model.KieContainerDetails;
 import org.kie.dockerui.shared.model.KieImageCategory;
 import org.kie.dockerui.shared.model.KieImageType;
+import org.kie.dockerui.shared.model.impl.*;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class KieImageTypeManager {
 
-    public static final String TYPE_KIE_WB_ID = "jboss-kie/kie-wb";
-    public static final String TYPE_KIE_DROOLS_WB_ID = "jboss-kie/kie-drools-wb";
-    public static final String TYPE_KIE_SERVER_ID = "jboss-kie/kie-server";
-    public static final String TYPE_KIE_UF_DASHBUILDER_ID = "jboss-kie/uf-dashbuilder";
-    public static final String TYPE_WILDFLY_ID = "jboss/wildfly";
-    public static final String TYPE_EAP_ID = "redhat/eap";
-    public static final String TYPE_TOMCAT_ID = "tomcat";
-    public static final String TYPE_IN_MEMORY_DB_ID = "--InMemoryDB--";
-    public static final String TYPE_H2_ID = "h2";
-    public static final String TYPE_MYSQL_ID = "mysql";
-    public static final String TYPE_POSTGRESQL_ID = "postgresql";
-    public static final String TYPE_OTHER_ID = "other";
+    static final KieImageType[] KIE_APP_TYPES = new KieImageType[] {
+            KieWorkbenchType.INSTANCE, KieDroolsWorkbenchType.INSTANCE, KieServerType.INSTANCE, UfDashbuilderType.INSTANCE
+    };
 
-    private static final List<KieImageCategory> appServerAndDBMSCategories = new LinkedList<KieImageCategory>();
-    static {
-        appServerAndDBMSCategories.add(KieImageCategory.KIEAPP);
-        appServerAndDBMSCategories.add(KieImageCategory.APPSERVER);
-        appServerAndDBMSCategories.add(KieImageCategory.DBMS);
-    }
-    private static final List<KieImageCategory> appServerCategory = new LinkedList<KieImageCategory>();
-    static {
-        appServerCategory.add(KieImageCategory.KIEAPP);
-        appServerCategory.add(KieImageCategory.APPSERVER);
-    }
-    public static final KieImageType KIE_WB = new KieImageType(TYPE_KIE_WB_ID, "KIE Workbench", KieImageCategory.KIEAPP, "kie-wb").setSiteContextPath("kie-wb").setSupportedCategories(appServerAndDBMSCategories);
-    public static final KieImageType KIE_DROOLS_WB = new KieImageType(TYPE_KIE_DROOLS_WB_ID, "KIE Drools Workbench", KieImageCategory.KIEAPP, "kie-drools-wb").setSiteContextPath("kie-drools-wb").setSupportedCategories(appServerAndDBMSCategories);
-    public static final KieImageType KIE_SERVER = new KieImageType(TYPE_KIE_SERVER_ID, "KIE Execution Server", KieImageCategory.KIEAPP, "kie-server/services/rest/server").setSiteContextPath("kie-server").setSupportedCategories(appServerCategory);
-    public static final KieImageType KIE_UF_DASHBUILDER = new KieImageType(TYPE_KIE_UF_DASHBUILDER_ID, "UF Dashbuilder", KieImageCategory.KIEAPP, "dashbuilder").setSiteContextPath("uf-dashbuilder").setSupportedCategories(appServerAndDBMSCategories);
-    public static final KieImageType KIE_WILDFLY = new KieImageType(TYPE_WILDFLY_ID, "Wildfly", KieImageCategory.APPSERVER);
-    public static final KieImageType KIE_EAP = new KieImageType(TYPE_EAP_ID, "JBoss EAP", KieImageCategory.APPSERVER);
-    public static final KieImageType KIE_TOMCAT = new KieImageType(TYPE_TOMCAT_ID, "Tomcat", KieImageCategory.APPSERVER);
-    public static final KieImageType KIE_H2_IN_MEMORY = new KieImageType(TYPE_H2_ID, "H2", KieImageCategory.DBMS).setScope(KieImageType.Scope.RUNTIME);
-    public static final KieImageType KIE_MYSQL = new KieImageType(TYPE_MYSQL_ID, "MySQL", KieImageCategory.DBMS).setScope(KieImageType.Scope.RUNTIME);
-    public static final KieImageType KIE_POSTGRESQL = new KieImageType(TYPE_POSTGRESQL_ID, "PostgreSQL", KieImageCategory.DBMS).setScope(KieImageType.Scope.RUNTIME);
-    public static final KieImageType KIE_OTHER = new KieImageType(TYPE_OTHER_ID, "Others", KieImageCategory.OTHERS);
+    static final KieImageType[] APP_SERVER_TYPES = new KieImageType[] {
+            WildflyType.INSTANCE, EAPType.INSTANCE, TomcatType.INSTANCE
+    };
 
-    public static final KieImageType[] ALL_TYPES = new KieImageType[] {
-            // KIEAPP Category.
-            KIE_WB, KIE_DROOLS_WB, KIE_SERVER, KIE_UF_DASHBUILDER,
-            // APPSERVER Category.
-            KIE_WILDFLY, KIE_EAP, KIE_TOMCAT,
-            // DBMS Category.
-            KIE_H2_IN_MEMORY, KIE_MYSQL, KIE_POSTGRESQL,
-            // OTHERS Category.
-            KIE_OTHER
+    static final KieImageType[] DBMS_TYPES = new KieImageType[] {
+            H2Type.INSTANCE, MySQLType.INSTANCE, PostgreSQLType.INSTANCE
+    };
+    
+    static final KieImageType[] ALL_TYPES = new KieImageType[] {
+            KieWorkbenchType.INSTANCE, KieDroolsWorkbenchType.INSTANCE, KieServerType.INSTANCE, UfDashbuilderType.INSTANCE,
+            WildflyType.INSTANCE, EAPType.INSTANCE, TomcatType.INSTANCE,
+            H2Type.INSTANCE, MySQLType.INSTANCE, PostgreSQLType.INSTANCE,
+            OthersType.INSTANCE
     };
 
     public static List<KieImageType> getTypes(final KieImageCategory category) {
@@ -78,6 +51,15 @@ public class KieImageTypeManager {
         return getKIEAppType(repository) != null;
     }
 
+    public static KieImageType getImageTypeById(final String id) {
+        for (final KieImageType type : ALL_TYPES) {
+            if (type.getId().equalsIgnoreCase(id)) {
+                return type;
+            }
+        }
+        return null;
+    }
+    
     public static KieImageType getAppServerType(final String repository) {
         final List<KieImageType> kieAppTypes = KieImageTypeManager.getTypes(KieImageCategory.APPSERVER);
         for (final KieImageType kieAppType: kieAppTypes) {
@@ -86,38 +68,62 @@ public class KieImageTypeManager {
 
         // Check the app server used in kie apps containers.
         if (isKIEAppType(repository)) {
-            if (repository.endsWith("wildfly8")) return KieImageTypeManager.KIE_WILDFLY;
-            if (repository.endsWith("tomcat7")) return KieImageTypeManager.KIE_TOMCAT;
-            if (repository.endsWith("eap64")) return KieImageTypeManager.KIE_EAP;
+            if (repository.endsWith("wildfly8")) return WildflyType.INSTANCE;
+            if (repository.endsWith("tomcat7")) return TomcatType.INSTANCE;
+            if (repository.endsWith("eap64")) return EAPType.INSTANCE;
         }
         return null;
     }
 
-    public static KieImageType getDBMSType(final String id, final String repository, final String[] tags, final KieContainerDetails details) {
-        if (KieImageTypeManager.KIE_MYSQL.getId().equals(repository)) return KieImageTypeManager.KIE_MYSQL;
-        if (KieImageTypeManager.KIE_POSTGRESQL.getId().equals(repository)) return KieImageTypeManager.KIE_POSTGRESQL;
+    public static KieImageType getDBMSType(final String repository, final KieContainerDetails details) {
+        if (MySQLType.INSTANCE.getId().equals(repository)) return MySQLType.INSTANCE;
+        if (PostgreSQLType.INSTANCE.getId().equals(repository)) return PostgreSQLType.INSTANCE;
 
         // Check container env vars to extract db usage information.
-        if (isKIEAppType(repository)) {
-            for (final String tag : tags) {
-                if (details != null) {
-                    String[] envs = details.getEnvVars();
-                    if (envs != null && envs.length > 0) {
-                        for (String env : envs) {
-                            if (env.startsWith("KIE_CONNECTION_DRIVER")) {
-                                String[] _s = extractEnvVariable(env);
-                                if ("mysql".equals(_s[1])) return KieImageTypeManager.KIE_MYSQL;
-                                if ("postgres".equals(_s[1])) return KieImageTypeManager.KIE_POSTGRESQL;
-                            }
-                        }
+        if (details != null && isKIEAppType(repository)) {
+            String[] envs = details.getEnvVars();
+            if (envs != null && envs.length > 0) {
+                for (String env : envs) {
+                    if (env.startsWith("KIE_CONNECTION_DRIVER")) {
+                        String[] _s = extractEnvVariable(env);
+                        if ("mysql".equals(_s[1])) return MySQLType.INSTANCE;
+                        if ("postgres".equals(_s[1])) return PostgreSQLType.INSTANCE;
                     }
                 }
-                // If any env variable found, it should use H2, as default.
-                return KieImageTypeManager.KIE_H2_IN_MEMORY;
             }
+            // If any env variable found, it should use H2, as default.
+            return H2Type.INSTANCE;
         }
 
         return null;
+    }
+    
+    public static String getArtifactQualifier(final KieImageType type, final KieImageType subType) {
+        if (subType != null && type.getCategory().equals(KieImageCategory.KIEAPP)) {
+            if (KieServerType.INSTANCE.equals(type)) {
+                if (WildflyType.INSTANCE.equals(subType)) {
+                    return "ee7";
+                } else if (EAPType.INSTANCE.equals(subType)) {
+                    return "ee6";
+                } else if (TomcatType.INSTANCE.equals(subType)) {
+                    return "webc";
+                }
+            } else {
+                return getDefaultArtifactQualifier(subType);
+            }
+        }
+        return "";
+    }
+    
+    private static String getDefaultArtifactQualifier(final KieImageType subType) {
+        if (WildflyType.INSTANCE.equals(subType)) {
+            return "wildfly8";
+        } else if (EAPType.INSTANCE.equals(subType)) {
+            return "eap6_4";
+        } else if (TomcatType.INSTANCE.equals(subType)) {
+            return "tomcat7";
+        }
+        return "";
     }
 
     public static String[] extractEnvVariable(String env) {

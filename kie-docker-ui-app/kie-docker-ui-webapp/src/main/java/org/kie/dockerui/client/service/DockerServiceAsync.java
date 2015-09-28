@@ -1,7 +1,10 @@
 package org.kie.dockerui.client.service;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.kie.dockerui.shared.model.*;
+import org.kie.dockerui.shared.model.KieContainer;
+import org.kie.dockerui.shared.model.KieContainerDetails;
+import org.kie.dockerui.shared.model.KieImage;
+import org.kie.dockerui.shared.model.KieListCommandResponse;
 
 import java.util.Collection;
 import java.util.List;
@@ -33,8 +36,6 @@ public interface DockerServiceAsync {
     void listImages(AsyncCallback<List<KieImage>> async);
     
     void getImage(String imageId, AsyncCallback<KieImage> async);
-
-    void summary(AsyncCallback<KieDockerSummary> async);
 
     void list(AsyncCallback<KieListCommandResponse> async);
 }

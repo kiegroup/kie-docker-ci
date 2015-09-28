@@ -5,7 +5,6 @@ import org.kie.dockerui.backend.service.SettingsServiceImpl;
 import org.kie.dockerui.backend.util.KieDockerUtils;
 import org.kie.dockerui.shared.model.KieAppStatus;
 import org.kie.dockerui.shared.model.KieContainer;
-import org.kie.dockerui.shared.model.KieContainerDetails;
 import org.kie.dockerui.shared.settings.Settings;
 import org.kie.dockerui.shared.util.SharedUtils;
 import org.slf4j.Logger;
@@ -32,6 +31,8 @@ public class KieStatusManager {
     private static final Map<String, KieAppStatus> statusMap = new HashMap<String, KieAppStatus>();
     private boolean isStarted;
 
+    private static boolean isEnabled;
+
     public static synchronized KieStatusManager getInstance() {
         if (instance == null) {
             instance = new KieStatusManager();
@@ -41,6 +42,15 @@ public class KieStatusManager {
 
     public KieStatusManager() {
         isStarted = false;
+        enable();
+    }
+    
+    public void enable() {
+        isEnabled = true;
+    }
+
+    public void disable() {
+        isEnabled = false;
     }
 
     /**
@@ -56,48 +66,54 @@ public class KieStatusManager {
      * @param pullInterval The pulling interval, in seconds.
      */
     public void start(Long pullInterval) {
-        if (isStarted) {
-            throw new RuntimeException("Status Manager Daemon has been already started");
+        if (isEnabled) {
+            if (isStarted) {
+                throw new RuntimeException("Status Manager Daemon has been already started");
+            }
+
+            KieStatusManagerDaemonWork work = pullInterval != null ? new KieStatusManagerDaemonWork(pullInterval) :
+                    new KieStatusManagerDaemonWork();
+            executor.execute(work);
+            isStarted = true;
         }
-        
-        KieStatusManagerDaemonWork work = pullInterval != null ? new KieStatusManagerDaemonWork(pullInterval) :
-                new KieStatusManagerDaemonWork();
-        executor.execute(work);
-        isStarted = true;
     }
 
     /**
      * Shutdown the daemon. As only one in the executor service, shutdown the executor.
      */
     public void shutdown() {
-        executor.shutdown();
+        if (isEnabled) {
+            executor.shutdown();
+        }
     }
 
     /**
      * Runs a single status request to the Docker remote service.
      */
     public synchronized void run() {
-        LOGGER.info("Building status caché for KIE images...");
-        statusMap.clear();
-        final List<KieContainer> containers = dockerService.listContainers();
-        if (containers != null) {
-            for (final KieContainer container : containers) {
-                final KieAppStatus status = getStatus(container);
-                addStatus(container.getImage(), status);
+        if (isEnabled) {
+            LOGGER.info("Building status caché for KIE images...");
+            statusMap.clear();
+            final List<KieContainer> containers = dockerService.listContainers();
+            if (containers != null) {
+                for (final KieContainer container : containers) {
+                    final KieAppStatus status = getStatus(container);
+                    addStatus(container.getImage(), status);
+                }
             }
+            LOGGER.info("Status caché for KIE images build completed.");
         }
-        LOGGER.info("Status caché for KIE images build completed.");
     }
 
     public void addStatus(final String image, final KieAppStatus status) {
-        if (image != null && status != null) {
+        if (isEnabled && image != null && status != null) {
             statusMap.put(image, status);
             LOGGER.info("Added or updated status " + status.name() + " for image " + image);
         }
     }
 
     public synchronized void updateStatus(final KieContainer container) {
-        if (container != null && SharedUtils.isKieApp(container)) {
+        if (isEnabled && container != null && SharedUtils.isKieApp(container)) {
             final boolean isUp = SharedUtils.getContainerStatus(container);
             if (isUp) {
                 final String image = container.getImage();
@@ -110,11 +126,13 @@ public class KieStatusManager {
     }
 
     public KieAppStatus getStatus(final String image) {
+        if (!isEnabled) return KieAppStatus.NOT_EVALUATED;
         if (image == null) return null;
         return statusMap.get(image);
     }
 
     public KieAppStatus getStatus(final KieContainer container)  {
+        if (!isEnabled) return KieAppStatus.NOT_EVALUATED;
         if (container == null) return null;
         if (!SharedUtils.getContainerStatus(container)) return null;
         if (!SharedUtils.isKieApp(container)) return  null;
@@ -131,7 +149,7 @@ public class KieStatusManager {
     }
     
     public KieAppStatus getStatusByURL(final String url)  {
-
+        if (!isEnabled) return KieAppStatus.NOT_EVALUATED;
         try {
             URL siteURL = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) siteURL

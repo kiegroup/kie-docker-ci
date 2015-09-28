@@ -4,8 +4,10 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.kie.dockerui.backend.util.KieDockerUtils;
 import org.kie.dockerui.backend.util.Timer;
 import org.kie.dockerui.client.service.SettingsService;
-import org.kie.dockerui.shared.KieImageTypeManager;
 import org.kie.dockerui.shared.model.KieImageType;
+import org.kie.dockerui.shared.model.impl.H2Type;
+import org.kie.dockerui.shared.model.impl.MySQLType;
+import org.kie.dockerui.shared.model.impl.PostgreSQLType;
 import org.kie.dockerui.shared.settings.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,9 @@ public class SettingsServiceImpl extends RemoteServiceServlet implements Setting
     public static final String APP_PROPERTY_POSTGRES_IMAGE = "docker.image.type.postgresql";
     public static final String APP_PROPERTY_JENKINS_URL = "docker.jenkins.url";
     public static final String APP_PROPERTY_ARTIFACTS_PATH = "docker.kie.artifacts.path";
-    public static final String APP_PROPERTY_PULL_ENABLED = "docker.pull.enabled";
-    public static final String APP_PROPERTY_PULL_INTERVAL = "docker.pull.interval";
+    public static final String APP_PROPERTY_STATUS_MANAGER_ENABLED = "docker.statusManager.enabled";
+    public static final String APP_PROPERTY_STATUS_MANAGER_PULL_ENABLED = "docker.statusManager.pull.enabled";
+    public static final String APP_PROPERTY_STATUS_MANAGER_PULL_INTERVAL = "docker.statusManager.pull.interval";
     
     private static Settings settings;
     
@@ -50,9 +53,9 @@ public class SettingsServiceImpl extends RemoteServiceServlet implements Setting
     @Override
     public String getDefaultImageForType(KieImageType type) {
         final Properties p = KieDockerUtils.getProperties(APP_PROPERTIES);
-        if (KieImageTypeManager.KIE_MYSQL.equals(type)) return p.getProperty(APP_PROPERTY_MYSQL_IMAGE);
-        if (KieImageTypeManager.KIE_POSTGRESQL.equals(type)) return p.getProperty(APP_PROPERTY_POSTGRES_IMAGE);
-        if (KieImageTypeManager.KIE_H2_IN_MEMORY.equals(type)) return KieImageTypeManager.TYPE_IN_MEMORY_DB_ID;
+        if (MySQLType.INSTANCE.equals(type)) return p.getProperty(APP_PROPERTY_MYSQL_IMAGE);
+        if (PostgreSQLType.INSTANCE.equals(type)) return p.getProperty(APP_PROPERTY_POSTGRES_IMAGE);
+        if (H2Type.INSTANCE.equals(type)) return null;
         return null;
     }
 
@@ -77,15 +80,34 @@ public class SettingsServiceImpl extends RemoteServiceServlet implements Setting
         String restProtocol = readSetting(appProperties, APP_PROPERTY_RESTAPI_PROTOCOL);
         String restPort = readSetting(appProperties, APP_PROPERTY_RESTAPI_PORT);
         String kieRepo = readSetting(appProperties, APP_PROPERTY_KIE_REPOSITORY);
-        String _pullEnabled = readSetting(appProperties, APP_PROPERTY_PULL_ENABLED);
-        boolean pullEnabled = Boolean.valueOf(_pullEnabled);
-        String _pullInterval = readSetting(appProperties, APP_PROPERTY_PULL_INTERVAL);
-        long pullInterval = Long.decode(_pullInterval);
+        String _isStatusManagerMEnabled = readSetting(appProperties, APP_PROPERTY_STATUS_MANAGER_ENABLED);
+        boolean isStatusManagerMEnabled = Boolean.valueOf(_isStatusManagerMEnabled);
+        boolean pullEnabled = false;
+        long pullInterval = 0;
+        if(isStatusManagerMEnabled) {
+            String _pullEnabled = readSetting(appProperties, APP_PROPERTY_STATUS_MANAGER_PULL_ENABLED);
+            pullEnabled = Boolean.valueOf(_pullEnabled);
+            String _pullInterval = readSetting(appProperties, APP_PROPERTY_STATUS_MANAGER_PULL_INTERVAL);
+            pullInterval = Long.decode(_pullInterval);
+        }
 
-        final Settings settings = new Settings(restProtocol, hostPrivate, hostPublic, user, Integer.decode(restPort),
-                registryEnabled, Integer.decode(registryPort), kieRepo, artifactsPath, jenkinsJobURL,
-                pullEnabled, pullInterval);
-
+        final Settings settings = new Settings();
+        settings.setProtocol(restProtocol);
+        settings.setPrivateHost(hostPrivate);
+        settings.setPublicHost(hostPublic);
+        settings.setUser(user);
+        settings.setRestApiPort(Integer.decode(restPort));
+        settings.setRegistryEnabled(registryEnabled);
+        settings.setRegistryPort(Integer.decode(registryPort));
+        settings.setKieRepositoryName(kieRepo);
+        settings.setArtifactsPath(artifactsPath);
+        settings.setJenkinsJobURL(jenkinsJobURL);
+        settings.setIsStatusManagerEnabled(isStatusManagerMEnabled);
+        settings.setPullEnabled(pullEnabled);
+        settings.setPullInterval(pullInterval);
+        settings.setMysqlImage(getDefaultImageForType(MySQLType.INSTANCE));
+        settings.setPostgresImage(getDefaultImageForType(PostgreSQLType.INSTANCE));
+        
         if (LOGGER.isDebugEnabled()) {
             timer.end();
             LOGGER.debug("Settings read. Elapsed time = " + timer.getTotalTime());

@@ -2,9 +2,10 @@ package org.kie.dockerui.backend.service;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.kie.dockerui.client.service.DatabaseService;
-import org.kie.dockerui.shared.KieImageTypeManager;
 import org.kie.dockerui.shared.model.KieContainer;
 import org.kie.dockerui.shared.model.KieImageType;
+import org.kie.dockerui.shared.model.impl.MySQLType;
+import org.kie.dockerui.shared.model.impl.PostgreSQLType;
 import org.kie.dockerui.shared.util.DatabaseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class DatabaseServiceImpl extends RemoteServiceServlet implements Databas
             return;
         }
         
-        if (!KieImageTypeManager.KIE_MYSQL.equals(imageType) && !KieImageTypeManager.KIE_POSTGRESQL.equals(imageType)) {
+        if (!MySQLType.INSTANCE.equals(imageType) && !PostgreSQLType.INSTANCE.equals(imageType)) {
             LOGGER.error("Database type not supported. Type: " + imageType.getName());
             return;
         }
@@ -50,13 +51,13 @@ public class DatabaseServiceImpl extends RemoteServiceServlet implements Databas
             return;
         }
 
-        final boolean isMySQL = KieImageTypeManager.KIE_MYSQL.equals(imageType);
+        final boolean isMySQL = MySQLType.INSTANCE.equals(imageType);
         final String driver = isMySQL ? DRIVER_MYSQL : DRIVER_POSTGRES;
         final String user = DatabaseUtils.getConnectionUser(imageType);
         final String password = DatabaseUtils.getConnectionPassword(imageType);
         final String host = settingsService.getSettings().getPrivateHost();
         final int port = DatabaseUtils.getPublicPort(container);
-        final String url = DatabaseUtils.getJdbcUrl(isMySQL ? KieImageTypeManager.KIE_MYSQL : KieImageTypeManager.KIE_POSTGRESQL, host, port, "");
+        final String url = DatabaseUtils.getJdbcUrl(isMySQL ? MySQLType.INSTANCE : PostgreSQLType.INSTANCE, host, port, "");
         createDatabase(driver, url, user, password, dbName);
     }
 

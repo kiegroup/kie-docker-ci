@@ -2,14 +2,13 @@ package org.kie.dockerui.shared.model;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import java.util.List;
-
 public class KieImageType implements IsSerializable {
     // MUST match with the image name to categorize.
     private String id;
     private String name;
+    private String artifactId;
     private KieImageCategory category;
-    private List<KieImageCategory> supportedCategories;
+    private KieImageCategory[] supportedCategories;
     private String contextPath;
     private String siteContextPath;
     private Scope scope = Scope.NAMING_CONVENTION;
@@ -81,11 +80,11 @@ public class KieImageType implements IsSerializable {
         return this;
     }
 
-    public List<KieImageCategory> getSupportedCategories() {
+    public KieImageCategory[] getSupportedCategories() {
         return supportedCategories;
     }
 
-    public KieImageType setSupportedCategories(List<KieImageCategory> supportedCategories) {
+    public KieImageType setSupportedCategories(KieImageCategory[] supportedCategories) {
         this.supportedCategories = supportedCategories;
         return this;
     }
@@ -96,6 +95,15 @@ public class KieImageType implements IsSerializable {
 
     public KieImageType setScope(Scope scope) {
         this.scope = scope;
+        return this;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public KieImageType setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
         return this;
     }
 

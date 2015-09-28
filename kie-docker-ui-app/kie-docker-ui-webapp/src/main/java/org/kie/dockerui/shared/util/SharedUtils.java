@@ -1,5 +1,7 @@
 package org.kie.dockerui.shared.util;
 
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import org.kie.dockerui.shared.model.*;
 import org.kie.dockerui.shared.settings.Settings;
 
@@ -7,6 +9,8 @@ import java.util.List;
 
 public class SharedUtils {
 
+    public static final String IMAGE_TAG_PATTERN = "(\\d+.\\d+.\\d+.*)\\.(.*)";
+    
     public static boolean isKieApp(final KieImage image) {
         return image != null && image.getType() != null &&
                 KieImageCategory.KIEAPP.equals(image.getType().getCategory());
@@ -19,19 +23,26 @@ public class SharedUtils {
 
     public static boolean supportsDatabase(final KieImageType type) {
         return type != null && KieImageCategory.KIEAPP.equals(type.getCategory()) &&
-               type.getSupportedCategories() != null &&
-               type.getSupportedCategories().contains(KieImageCategory.DBMS);
+                supportsCategory(type, KieImageCategory.DBMS);
     }
     
     public static boolean supportsDatabase(final KieContainer container) {
         return container != null && container.getType() != null &&
                 KieImageCategory.KIEAPP.equals(container.getType().getCategory()) &&
-                container.getType().getSupportedCategories() != null &&
-                container.getType().getSupportedCategories().contains(KieImageCategory.DBMS);
+                supportsCategory(container.getType(), KieImageCategory.DBMS);
     }
     
+    public static boolean supportsCategory(final KieImageType type, final KieImageCategory category) {
+        final KieImageCategory[] supported = type.getSupportedCategories();
+        if (supported != null && supported.length > 0) {
+            for (final KieImageCategory category1 : supported) {
+                if (category1.equals(category)) return true;
+            }
+        }
+        return false;
+    } 
+    
     public static boolean getContainerStatus(final KieContainer container) {
-        // TODO: Improve status detection.
         return container.getStatus() != null && container.getStatus().contains("Up");
     }
 
@@ -60,6 +71,25 @@ public class SharedUtils {
         String _p = (repository != null && repository.trim().length() > 0) ? repository : "";
         String _t = (tag != null && tag.trim().length() > 0) ? ":" + tag: "";
         return _r + _p + _t;
+    }
+
+    public static String[] parseTag(final String tag) {
+        String[] result = null;
+        if (tag != null) {
+            RegExp regExp = RegExp.compile(IMAGE_TAG_PATTERN);
+            MatchResult matcher = regExp.exec(tag);
+            boolean matchFound = matcher != null; 
+
+            if (matchFound) {
+                result = new String[matcher.getGroupCount()];
+                // Get all groups for this match
+                for (int i = 0; i < matcher.getGroupCount(); i++) {
+                    String groupStr = matcher.getGroup(i);
+                    result[i] = groupStr;
+                }
+            }
+        }
+        return result;
     }
  
     public static String getPullAddress(final KieImage image, final Settings settings) {

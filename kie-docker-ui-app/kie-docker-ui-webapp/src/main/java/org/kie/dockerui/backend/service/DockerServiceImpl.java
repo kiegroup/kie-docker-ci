@@ -17,8 +17,10 @@ import org.kie.dockerui.backend.service.builder.KieDockerArtifactBuilder;
 import org.kie.dockerui.backend.util.Timer;
 import org.kie.dockerui.client.service.DockerService;
 import org.kie.dockerui.client.service.SettingsService;
-import org.kie.dockerui.shared.model.*;
-import org.kie.dockerui.shared.util.SharedUtils;
+import org.kie.dockerui.shared.model.KieContainer;
+import org.kie.dockerui.shared.model.KieContainerDetails;
+import org.kie.dockerui.shared.model.KieImage;
+import org.kie.dockerui.shared.model.KieListCommandResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,7 +113,7 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
                 result = new LinkedList<KieContainer>();
                 for (Container container : containers) {
                     KieContainer kieContainer = KieDockerArtifactBuilder.build(container);
-                    if (ids.contains(container.getId())) result.add(kieContainer);
+                    if (kieContainer != null && ids.contains(container.getId())) result.add(kieContainer);
                 }
             }
 
@@ -186,40 +188,10 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
         if (containerId != null) {
             KieStatusManager statusManager = KieStatusManager.getInstance();
             KieContainer container = getContainer(containerId);
-            statusManager.updateStatus(container);
-        }
-    }
-
-    @Override
-    public KieDockerSummary summary() {
-        final List<KieImage> images = listImages();
-        final List<KieContainer> containers = listContainers();
-
-        // Obtain KIE images.
-        final List<KieImage> kieImages = new LinkedList<KieImage>();
-        if (images != null) {
-            for (final KieImage image : images) {
-                if (SharedUtils.isKieApp(image)) kieImages.add(image);
+            if (container != null) {
+                statusManager.updateStatus(container);
             }
         }
-
-        // Obtain KIE containers.
-        final List<KieContainer> kieContainers = new LinkedList<KieContainer>();
-        if (containers != null) {
-            for (final KieContainer container : containers) {
-                if (SharedUtils.isKieApp(container)) kieContainers.add(container);
-            }
-        }
-        
-        // Create and populate the summary model.
-        final int imagesCount = images != null ? images.size() : 0;
-        final int containersCount = containers != null ? containers.size() : 0;
-        KieDockerSummary summary = new KieDockerSummary();
-        summary.setImagesCount(imagesCount);
-        summary.setContainersCount(containersCount);
-        summary.setKieImagesCount(kieImages.size());
-        summary.setKieContainersCount(kieContainers.size());
-        return summary;
     }
 
     @Override
