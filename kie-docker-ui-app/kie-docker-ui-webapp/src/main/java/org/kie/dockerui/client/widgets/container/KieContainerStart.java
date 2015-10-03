@@ -26,7 +26,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
@@ -38,6 +37,7 @@ import org.kie.dockerui.client.resources.i18n.Constants;
 import org.kie.dockerui.client.service.*;
 import org.kie.dockerui.client.util.ClientUtils;
 import org.kie.dockerui.client.widgets.TimeoutPopupPanel;
+import org.kie.dockerui.client.widgets.container.logs.KieContainerLogs;
 import org.kie.dockerui.shared.model.KieContainer;
 import org.kie.dockerui.shared.model.KieContainerStartArguments;
 import org.kie.dockerui.shared.model.KieImageType;
@@ -59,20 +59,6 @@ public class KieContainerStart extends Composite {
     interface KieContainerStartBinder extends UiBinder<Widget, KieContainerStart> {}
     private static KieContainerStartBinder uiBinder = GWT.create(KieContainerStartBinder.class);
     
-    interface KieContainerStartStyle extends CssResource {
-        String mainPanel();
-        String loadingPanel();
-        String mainPanels();
-        String logsWidget();
-        String logsPanel();
-    }
-
-    @UiField
-    KieContainerStartStyle style;
-
-    @UiField
-    FlowPanel mainPanel;
-
     @UiField
     Alert alert;
 
@@ -82,9 +68,6 @@ public class KieContainerStart extends Composite {
     @UiField
     Heading header;
 
-    @UiField
-    FlowPanel slidingPanelWrapper;
-    
     @UiField
     FlowPanel argumentsPreviewPanel;
     
@@ -108,12 +91,6 @@ public class KieContainerStart extends Composite {
 
     @UiField
     KieContainerLogs logsWidget;
-    
-    @UiField
-    FlowPanel buttonsPanel;
-    
-    @UiField
-    Button cancelButton;
     
     @UiField
     Button nextButton;
@@ -144,18 +121,8 @@ public class KieContainerStart extends Composite {
     @UiConstructor
     public KieContainerStart() {
         initWidget(uiBinder.createAndBindUi(this));
-        
-        // Configure button handlers.
-        cancelButton.addClickHandler(cancelButtonHandler);
     }
     
-    private final ClickHandler cancelButtonHandler = new ClickHandler() {
-        @Override
-        public void onClick(ClickEvent clickEvent) {
-            clear();
-        }
-    };
-
     public void show(final KieContainerStartArguments arguments) {
         clear();
         showInputArguments(arguments);
@@ -200,14 +167,12 @@ public class KieContainerStart extends Composite {
             final String name = arguments.getContainerName();
             String dbImage = arguments.getDbImage();
             final String dbName = arguments.getDbContainerName();
-            final Map<String, String> envs = arguments.getEnvs();
 
-            header.setText(Constants.INSTANCE.verifyContainerArguments());
+            header.setText(Constants.INSTANCE.newContainerCreation());
             imageSelectedText.setText(image);
             containerName.setText(name);
             
-            
-            if (dbImage != null && dbImage.equals(H2Type.INSTANCE)) {
+            if (dbImage != null && dbImage.equals(H2Type.INSTANCE.getId())) {
                 dbImageSelectedText.setText(Constants.INSTANCE.inMemoryDB());
                 dbContainerName.setText("");
                 dbImage = null;
@@ -218,7 +183,6 @@ public class KieContainerStart extends Composite {
                 dbImageSelectedText.setText(Constants.INSTANCE.noImageRequiredForDatabase());
                 dbContainerName.setText("");
             }
-            // TODO: Env vars.
 
             final String _dbImage = dbImage;
             addNextButtonHandler(new ClickHandler() {
@@ -291,7 +255,7 @@ public class KieContainerStart extends Composite {
                         
                         header.setText(Constants.INSTANCE.runningDbContainer() + " " + dbImageType.getName());
                         showNextButton(Constants.INSTANCE.createKieDatabase());
-                        showLogs(id, new ClickHandler() {
+                        showLogs(id, 3000, new ClickHandler() {
                             @Override
                             public void onClick(ClickEvent clickEvent) {
                                 showDatabaseDetails(arguments, id);
@@ -364,7 +328,7 @@ public class KieContainerStart extends Composite {
 
                         // Specify the password for the dbms container via environment variables.
                         final Map<String, String> dbContainerEnvs = DatabaseUtils.buildEnvsForDbConnection(dbImageType != null ? dbImageType : H2Type.INSTANCE,
-                                settings.getPublicHost(), DatabaseUtils.getPublicPort(dbContainer), dbName);
+                                settings.getPublicHost(), DatabaseUtils.getPublicPort(dbContainer, dbImageType), dbName);
 
                         databaseCreatedImage.setUrl(Images.INSTANCE.greenTick().getSafeUri());
                         databaseJdbcUrlText.setText(ClientUtils.getValue(dbContainerEnvs, DatabaseUtils.KIE_CONNECTION_URL));
@@ -393,9 +357,10 @@ public class KieContainerStart extends Composite {
 
     }
     
-    private void showLogs(final String id, final ClickHandler nextButtonHandler) {
+    private void showLogs(final String id, final int refreshMillis, final ClickHandler nextButtonHandler) {
         
         // Enable widget display.
+        logsWidget.setRefreshMillis(refreshMillis);
         logsWidget.show(id);
         addNextButtonHandler(nextButtonHandler);
         databasePanel.setVisible(false);
@@ -445,8 +410,7 @@ public class KieContainerStart extends Composite {
 
                         header.setText(Constants.INSTANCE.runningKieContainer() + " " + imageType.getName());
                         showNextButton(Constants.INSTANCE.finished());
-                        cancelButton.setVisible(false);
-                        showLogs(id, new ClickHandler() {
+                        showLogs(id, KieContainerLogs.REFRESH_TIME, new ClickHandler() {
                             @Override
                             public void onClick(ClickEvent clickEvent) {
                                 clear();

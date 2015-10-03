@@ -56,7 +56,7 @@ public class DatabaseServiceImpl extends RemoteServiceServlet implements Databas
         final String user = DatabaseUtils.getConnectionUser(imageType);
         final String password = DatabaseUtils.getConnectionPassword(imageType);
         final String host = settingsService.getSettings().getPrivateHost();
-        final int port = DatabaseUtils.getPublicPort(container);
+        final int port = DatabaseUtils.getPublicPort(container, imageType);
         final String url = DatabaseUtils.getJdbcUrl(isMySQL ? MySQLType.INSTANCE : PostgreSQLType.INSTANCE, host, port, "");
         createDatabase(driver, url, user, password, dbName);
     }

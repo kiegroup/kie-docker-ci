@@ -104,7 +104,6 @@
           <deploy>${project.build.directory}/gwt-symbols-deploy</deploy>
           <localWorkers>4</localWorkers>
           <logLevel>INFO</logLevel>
-          <!--<module>org.kie.dockerui.FastCompiledDockerUI</module>-->
           <module>org.kie.dockerui.DockerUI</module>
           <draftCompile>false</draftCompile>
           <force>true</force>

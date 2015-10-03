@@ -4,6 +4,7 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:w="urn:import:org.kie.dockerui.client.widgets"
              xmlns:c="urn:import:org.kie.dockerui.client.widgets.container"
+             xmlns:l="urn:import:org.kie.dockerui.client.widgets.container.logs"
              xmlns:n="urn:import:org.kie.dockerui.client.widgets.container.navigator"
              xmlns:e="urn:import:org.kie.dockerui.client.widgets.container.explorer"
     >
@@ -89,7 +90,7 @@
 
       <!-- Container logs. -->
       <g:FlowPanel ui:field="logsPanel" addStyleNames="{style.logsPanel} ">
-        <c:KieContainerLogs ui:field="logsWidget" addStyleNames="{style.logsWidget}"/>
+        <l:KieContainerLogs ui:field="logsWidget" addStyleNames="{style.logsWidget}"/>
       </g:FlowPanel>
 
       <!-- Start a new container panel. -->

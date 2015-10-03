@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.dockerui.client.widgets.container;
+package org.kie.dockerui.client.widgets.container.logs;
 
 import com.github.gwtbootstrap.client.ui.AccordionGroup;
 import com.github.gwtbootstrap.client.ui.Image;
@@ -42,27 +42,10 @@ import org.kie.dockerui.shared.model.KieContainer;
 public class KieContainerLogs extends Composite {
 
     private final static String BUTTON_SIZE = "32px";
-    private final static int REFRESH_TIME = 10000;
+    public final static int REFRESH_TIME = 10000;
     
     interface KieContainerLogsBinder extends UiBinder<Widget, KieContainerLogs> {}
     private static KieContainerLogsBinder uiBinder = GWT.create(KieContainerLogsBinder.class);
-    
-    interface KieContainerLogsStyle extends CssResource {
-        String mainPanel();
-        String loadingPanel();
-        String logsPanel();
-        String accordion();
-        String refreshPanel();
-        String detailsActionsPanel();
-        String playButton();
-        String stopButton();
-        String logText();
-        String timeOutPopupCounterPanel();
-        String timeOutPopupCounterText();
-    }
-
-    @UiField
-    FlowPanel mainPanel;
     
     @UiField
     TimeoutPopupPanel loadingPanel;
@@ -72,6 +55,9 @@ public class KieContainerLogs extends Composite {
     
     @UiField
     HTML timeOutPopupCounterText;
+    
+    @UiField
+    KieLogsActions popupLogActions;
     
     @UiField
     AccordionGroup infoAccordionGroup;
@@ -86,11 +72,8 @@ public class KieContainerLogs extends Composite {
     HTML infoContainerName;
     
     @UiField
-    Image playButton;
+    KieLogsActions topLogActions;
     
-    @UiField
-    Image stopButton;
-
     @UiField
     ScrollPanel logsPanel;
 
@@ -105,29 +88,25 @@ public class KieContainerLogs extends Composite {
     private String id = null;
     private int refreshMillis = REFRESH_TIME;
     
-    private final ClickHandler playClickHandler = new ClickHandler() {
+    private final KieLogsActions.ContainerLogActionEventHandler logActionEventHandler = new KieLogsActions.ContainerLogActionEventHandler() {
         @Override
-        public void onClick(final ClickEvent clickEvent) {
-            play();
-        }
-    };
-
-    private final ClickHandler stopClickHandler = new ClickHandler() {
-        @Override
-        public void onClick(final ClickEvent clickEvent) {
-            stop();
+        public void onLogAction(KieLogsActions.ContainerLogActionEvent event) {
+            if (KieLogsActions.LogAction.REFRESH.equals(event.getAction())) {
+                currentTimerSec = 0;
+                doShow();
+            } else if (KieLogsActions.LogAction.PLAY.equals(event.getAction())) {
+                play();
+            } else if (KieLogsActions.LogAction.STOP.equals(event.getAction())) {
+                stop();
+            }
         }
     };
     
     @UiConstructor
     public KieContainerLogs() {
         initWidget(uiBinder.createAndBindUi(this));
-        playButton.setUrl(Images.INSTANCE.playIconData().getSafeUri());
-        playButton.setSize(BUTTON_SIZE, BUTTON_SIZE);
-        playButton.addClickHandler(playClickHandler);
-        stopButton.setUrl(Images.INSTANCE.stopIconData().getSafeUri());
-        stopButton.setSize(BUTTON_SIZE, BUTTON_SIZE);
-        stopButton.addClickHandler(stopClickHandler);
+        topLogActions.addContainerLogActionEventHandler(logActionEventHandler);
+        popupLogActions.addContainerLogActionEventHandler(logActionEventHandler);
     }
 
     public void show(final String id) {
@@ -186,7 +165,7 @@ public class KieContainerLogs extends Composite {
             }
         });
     }
-    
+
     public void play() {
         timer = new Timer() {
             @Override
@@ -202,8 +181,8 @@ public class KieContainerLogs extends Composite {
         };
 
         updateTimerMillis();
-        disableButton(playButton);
-        enableButton(stopButton);
+        disableAction(KieLogsActions.LogAction.PLAY);
+        enableAction(KieLogsActions.LogAction.STOP);
         timer.schedule(1000);
     }
 
@@ -215,8 +194,18 @@ public class KieContainerLogs extends Composite {
         }
         
         disableTimerMillis();
-        enableButton(playButton);
-        disableButton(stopButton);
+        enableAction(KieLogsActions.LogAction.PLAY);
+        disableAction(KieLogsActions.LogAction.STOP);
+    }
+    
+    private void disableAction(KieLogsActions.LogAction action) {
+        topLogActions.disableAction(action);
+        popupLogActions.disableAction(action);
+    }
+
+    private void enableAction(KieLogsActions.LogAction action) {
+        topLogActions.enableAction(action);
+        popupLogActions.enableAction(action);
     }
     
     private void updateTimerMillis() {
@@ -240,8 +229,9 @@ public class KieContainerLogs extends Composite {
     
     private void updateTimerMillisPosition(final int scrollTop) {
         final int wWidth = Window.getClientWidth();
+        final int pWidth = timeOutPopupCounterPanel.getOffsetWidth() + 50;
         timeOutPopupCounterPanel.getElement().getStyle().setTop(scrollTop, Style.Unit.PX);
-        timeOutPopupCounterPanel.getElement().getStyle().setLeft(wWidth / 2, Style.Unit.PX);
+        timeOutPopupCounterPanel.getElement().getStyle().setLeft(wWidth - pWidth, Style.Unit.PX);
     }
     
     private void disableTimerMillis() {
@@ -250,18 +240,6 @@ public class KieContainerLogs extends Composite {
         }
         timeOutPopupCounterText.setText("");
         timeOutPopupCounterPanel.setVisible(false);
-    }
-    
-    private void enableButton(final Image button) {
-        applyAlpha(button, 1d);
-    }
-
-    private void disableButton(final Image button) {
-        applyAlpha(button, 0.2d);
-    }
-
-    private void applyAlpha(final Image image, final double alpha) {
-        image.getElement().setAttribute("style", "filter: alpha(opacity=5);opacity: " + alpha);
     }
     
     private void showLoadingView() {

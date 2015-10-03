@@ -20,7 +20,7 @@ import org.kie.dockerui.client.service.SettingsClientHolder;
 import org.kie.dockerui.client.util.ClientUtils;
 import org.kie.dockerui.client.widgets.TimeoutPopupPanel;
 import org.kie.dockerui.client.widgets.container.KieContainerDetails;
-import org.kie.dockerui.client.widgets.container.KieContainerLogs;
+import org.kie.dockerui.client.widgets.container.logs.KieContainerLogs;
 import org.kie.dockerui.client.widgets.container.KieContainerStart;
 import org.kie.dockerui.client.widgets.container.explorer.KieContainersExplorer;
 import org.kie.dockerui.client.widgets.container.navigator.KieContainersNavigator;
@@ -258,7 +258,6 @@ public class ContainersView extends Composite {
         }
         final KieContainerStartArguments arguments = new KieContainerStartArguments(image.getType(), imageName,
                 containerName, dbImageType, dbContainerImage, dbContainerName, null);
-        startContainerPanel.setTitle(Constants.INSTANCE.createAndStartKieContainer() + " " + containerName);
         logsPanel.setVisible(false);
         containersPanel.setVisible(false);
         startContainerPanel.setVisible(true);

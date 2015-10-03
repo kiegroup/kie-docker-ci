@@ -3,45 +3,17 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:w="urn:import:org.kie.dockerui.client.widgets"
+             xmlns:l="urn:import:org.kie.dockerui.client.widgets.container.logs"
     >
 
   <ui:with field="i18n" type="org.kie.dockerui.client.resources.i18n.Constants"/>
 
-  <ui:style type="org.kie.dockerui.client.widgets.container.KieContainerLogs.KieContainerLogsStyle">
-    .mainPanel {
-
-    }
-
-    .loadingPanel {
-
-    }
-
+  <ui:style>
     .logsPanel {
       background-color: grey;
       line-height: 60%;
       height: 100%;
     }
-
-    .accordion {
-      width: 90%;
-    }
-
-    .detailsActionsPanel {
-      width: 100%;
-    }
-
-    .refreshPanel {
-      width: 10%;
-    }
-
-    .playButton {
-
-    }
-
-    .stopButton {
-      float: left;
-    }
-
     .logText {
       margin-left: 10px;
     }
@@ -53,6 +25,8 @@
       margin-top: 50px;
       padding: 10px;
       background-color: aliceblue;
+      border: 1px solid;
+      border-style: outset;
     }
     .timeOutPopupCounterText {
       font-weight: bold;
@@ -60,21 +34,22 @@
     }
   </ui:style>
   
-  <g:FlowPanel addStyleNames="{style.mainPanel} " ui:field="mainPanel">
+  <g:FlowPanel>
 
-    <w:TimeoutPopupPanel ui:field="loadingPanel" autoHideEnabled="false" modal="true" glassEnabled="true" addStyleNames="{style.loadingPanel} ">
+    <w:TimeoutPopupPanel ui:field="loadingPanel" autoHideEnabled="false" modal="true" glassEnabled="true">
       <g:HTML text="{i18n.loading}..."/>
     </w:TimeoutPopupPanel>
 
     <g:FlowPanel ui:field="timeOutPopupCounterPanel" visible="false" addStyleNames="{style.timeOutPopupCounterPanel}">
       <g:HTML ui:field="timeOutPopupCounterText" addStyleNames="{style.timeOutPopupCounterText}"/>
+      <l:KieLogsActions ui:field="popupLogActions"/>
     </g:FlowPanel>
     
-    <g:HorizontalPanel addStyleNames="{style.detailsActionsPanel}">
+    <g:HorizontalPanel width="100%">
 
       <!-- Container information. -->
       <g:cell width="90%">
-        <b:Accordion addStyleNames="{style.accordion} ">
+        <b:Accordion width="90%">
           <b:AccordionGroup ui:field="infoAccordionGroup" defaultOpen="false">
             <b:Heading size="5" text="{i18n.containerId}"/>
             <b:WellForm>
@@ -94,10 +69,7 @@
 
       <!-- Refresh buttons. -->
       <g:cell width="90%">
-        <g:FlowPanel addStyleNames="{style.refreshPanel}">
-          <b:Image ui:field="playButton" altText="{i18n.refreshPlay}" title="{i18n.refreshPlay}" addStyleNames="{style.playButton}"/>
-          <b:Image ui:field="stopButton" altText="{i18n.refreshStop}" title="{i18n.refreshStop}" addStyleNames="{style.stopButton}"/>
-        </g:FlowPanel>
+        <l:KieLogsActions ui:field="topLogActions"/>
       </g:cell>
       
     </g:HorizontalPanel>

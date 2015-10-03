@@ -61,10 +61,10 @@ public class DatabaseUtils {
         return -1;
     }
 
-    public static int getPublicPort(final KieContainer container) {
+    public static int getPublicPort(final KieContainer container, final KieImageType dbImageType) {
         
-        if (container != null) {
-            final int port = getDefaultPort(container.getType());
+        if (container != null && dbImageType != null) {
+            final int port = getDefaultPort(dbImageType);
             if (port > -1) {
                 List<KieContainerPort> ports = container.getPorts();
                 if (ports != null) {

@@ -3,72 +3,79 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:w="urn:import:org.kie.dockerui.client.widgets"
-             xmlns:c="urn:import:org.kie.dockerui.client.widgets.container"
+             xmlns:l="urn:import:org.kie.dockerui.client.widgets.container.logs"
     >
 
   <ui:with field="i18n" type="org.kie.dockerui.client.resources.i18n.Constants"/>
 
-  <ui:style type="org.kie.dockerui.client.widgets.container.KieContainerStart.KieContainerStartStyle">
-    .mainPanel {
-
-    }
-    .loadingPanel {
-
-    }
+  <ui:style>
     .mainPanels {
       width: 100%;
       overflow-x: hidden;
       overflow-y: auto;
     }
-    .logsPanel {
-      width: 100%
+    .centered {
+      width: 50%;
+      margin: 0 auto;
+    }
+    .dbArgumentsPanel {
+      margin-left: 15px;
     }
     .logsWidget {
       width: 95%;
     }
+    .buttonsPanel {
+      width: 80%;
+      margin: 15px;
+      text-align: right;
+    }
   </ui:style>
   
-  <g:FlowPanel addStyleNames="{style.mainPanel} " ui:field="mainPanel">
+  <g:FlowPanel>
 
     <b:Alert ui:field="alert" type="SUCCESS" close="false" animation="true"/>
 
-    <w:TimeoutPopupPanel ui:field="loadingPanel" autoHideEnabled="false" modal="true" glassEnabled="true" addStyleNames="{style.loadingPanel} ">
+    <w:TimeoutPopupPanel ui:field="loadingPanel" autoHideEnabled="false" modal="true" glassEnabled="true" >
       <g:HTML text="{i18n.loading}..."/>
     </w:TimeoutPopupPanel>
 
-    <b:Heading size="3" ui:field="header"/>
-
-    <g:FlowPanel ui:field="mainPanels" addStyleNames="{style.mainPanels}">
+    <g:FlowPanel addStyleNames="{style.mainPanels}">
       
-      <g:FlowPanel ui:field="slidingPanelWrapper">
-
+      <g:FlowPanel addStyleNames="{style.centered}">
+        <b:Heading size="3" ui:field="header" addStyleNames="{style.centered}"/>
       </g:FlowPanel>
 
-      <g:FlowPanel ui:field="argumentsPreviewPanel">
+      <g:FlowPanel ui:field="argumentsPreviewPanel" addStyleNames="{style.centered}">
 
-        <g:HorizontalPanel>
-          <g:VerticalPanel>
-            <b:Heading size="4" text="{i18n.imageWillStart}:" />
-            <b:Well>
-              <g:HTML ui:field="imageSelectedText"/>
-            </b:Well>
-            <b:Heading size="4" text="{i18n.useContainerName}:" />
-            <b:TextBox ui:field="containerName" enabled="false"/>
-          </g:VerticalPanel>
-          <g:VerticalPanel ui:field="dbImageArgumentsPanel">
-            <b:Heading size="4" text="{i18n.dbImageWillStart}:" />
-            <b:Well>
-              <g:HTML ui:field="dbImageSelectedText"/>
-            </b:Well>
-            <b:Heading size="4" text="{i18n.useDbContainerName}:" />
-            <b:TextBox ui:field="dbContainerName" enabled="false"/>
-          </g:VerticalPanel>
+        <g:HorizontalPanel width="100%">
+
+          <g:cell width="50%" horizontalAlignment="ALIGN_CENTER">
+            <g:VerticalPanel width="100%">
+              <b:Heading size="5" text="{i18n.imageToStart}:" />
+              <b:Well>
+                <g:HTML ui:field="imageSelectedText"/>
+              </b:Well>
+              <b:Heading size="5" text="{i18n.useContainerName}:" />
+              <b:TextBox ui:field="containerName" enabled="false" width="98%"/>
+            </g:VerticalPanel>  
+          </g:cell>
+
+          <g:cell width="50%" horizontalAlignment="ALIGN_CENTER">
+            <g:VerticalPanel ui:field="dbImageArgumentsPanel" width="100%" addStyleNames="{style.dbArgumentsPanel}">
+              <b:Heading size="5" text="{i18n.dbImageToStart}:" />
+              <b:Well>
+                <g:HTML ui:field="dbImageSelectedText"/>
+              </b:Well>
+              <b:Heading size="5" text="{i18n.useDbContainerName}:" />
+              <b:TextBox ui:field="dbContainerName" enabled="false" width="98%"/>
+            </g:VerticalPanel>
+          </g:cell>
+          
         </g:HorizontalPanel>
-        <b:Heading size="4" text="{i18n.envVarsSpecified}:" />
-        <!-- TODO -->
+        
       </g:FlowPanel>
 
-      <g:FlowPanel ui:field="databasePanel">
+      <g:FlowPanel ui:field="databasePanel" addStyleNames="{style.centered}">
         <g:HorizontalPanel>
           <b:Image ui:field="databaseCreatedImage"/>
           <g:VerticalPanel>
@@ -97,14 +104,11 @@
       </g:FlowPanel>
 
       <g:FlowPanel ui:field="logsPanel">
-        <c:KieContainerLogs ui:field="logsWidget" addStyleNames="{style.logsWidget}"/>
+        <l:KieContainerLogs ui:field="logsWidget" addStyleNames="{style.logsWidget}"/>
       </g:FlowPanel>
 
-      <g:FlowPanel ui:field="buttonsPanel">
-        <g:HorizontalPanel>
-          <b:Button ui:field="cancelButton" text="{i18n.cancel}" type="DANGER"/>
-          <b:Button ui:field="nextButton" text="{i18n.next}" type="SUCCESS"/>
-        </g:HorizontalPanel>
+      <g:FlowPanel addStyleNames="{style.buttonsPanel}">
+        <b:Button ui:field="nextButton" text="{i18n.next}" type="SUCCESS"/>
       </g:FlowPanel>
       
     </g:FlowPanel>

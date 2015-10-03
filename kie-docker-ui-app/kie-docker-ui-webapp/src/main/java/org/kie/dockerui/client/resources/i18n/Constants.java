@@ -106,12 +106,11 @@ public interface Constants extends ConstantsWithLookup {
     String next();
     String containerCreatedWithId();
     String containerStartedWithId();
-    String imageWillStart();
+    String imageToStart();
     String useContainerName();
-    String dbImageWillStart();
+    String dbImageToStart();
     String useDbContainerName();
-    String envVarsSpecified();
-    String verifyContainerArguments();
+    String newContainerCreation();
     String runningKieContainer();
     String runningDbContainer();
     String databaseCreatedSuccess();

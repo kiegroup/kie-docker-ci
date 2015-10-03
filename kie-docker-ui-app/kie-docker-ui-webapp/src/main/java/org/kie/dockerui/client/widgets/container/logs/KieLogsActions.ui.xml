@@ -1,0 +1,21 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
+    >
+
+  <ui:with field="i18n" type="org.kie.dockerui.client.resources.i18n.Constants"/>
+
+  <ui:style>
+    .button {
+      cursor: pointer;
+    }
+  </ui:style>
+
+  <g:FlowPanel width="100%">
+    <b:Image ui:field="refreshButton" altText="{i18n.refresh}" title="{i18n.refresh}" addStyleNames="{style.button}"/>
+    <b:Image ui:field="playButton" altText="{i18n.refreshPlay}" title="{i18n.refreshPlay}" addStyleNames="{style.button}"/>
+    <b:Image ui:field="stopButton" altText="{i18n.refreshStop}" title="{i18n.refreshStop}" addStyleNames="{style.button}"/>
+  </g:FlowPanel>
+  
+</ui:UiBinder>
