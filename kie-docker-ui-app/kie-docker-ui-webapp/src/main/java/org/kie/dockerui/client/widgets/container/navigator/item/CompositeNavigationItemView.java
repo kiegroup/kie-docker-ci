@@ -34,6 +34,7 @@ import java.util.List;
 
 public class CompositeNavigationItemView extends Composite {
 
+    private static final int COLUMNS_BY_ROW = 6;
     interface CompositeNavigationItemViewBinder extends UiBinder<Widget, CompositeNavigationItemView> {}
     private static CompositeNavigationItemViewBinder uiBinder = GWT.create(CompositeNavigationItemViewBinder.class);
 
@@ -62,27 +63,28 @@ public class CompositeNavigationItemView extends Composite {
         configureHeader(_title);
         if (items != null && !items.isEmpty()) {
             final int itemsCount = items.size();
-            int colCount = 12;
+            int colCount = COLUMNS_BY_ROW;
             int rowCount = 0;
             FluidRow row = new FluidRow();
             for (final NavigationItem item : items) {
                 int offset = -1;
-                if (colCount == 12) {
+                if (colCount == COLUMNS_BY_ROW) {
                     row = new FluidRow();
                     accordionGroup.add(row);
                     colCount = 0;
                     
                     // Pre-calculate the first column offset in order to align items at row's center position.
-                    offset = itemsCount - ( rowCount * 12 );
-                    if (offset > 0 && offset < 12) {
-                        offset = ( 12 - offset ) / 2;
+                    offset = itemsCount - ( rowCount * COLUMNS_BY_ROW );
+                    if (offset > 0 && offset < COLUMNS_BY_ROW) {
+                        offset = ( COLUMNS_BY_ROW - offset ) / 2;
                     } else {
                         offset = -1;
                     }
                     rowCount++;
                 }
                 
-                final Column column = new Column(1, offset > -1 ? offset : 0);
+                final Column column = new Column(2, offset > -1 ? offset * ( 12 / COLUMNS_BY_ROW) : 0);
+                column.getElement().getStyle().setProperty("minWidth","150px");
                 showItemView(column, item);
                 row.add(column);
                 colCount++;
