@@ -9,6 +9,7 @@ import org.kie.dockerui.client.util.ClientUtils;
 import org.kie.dockerui.client.widgets.container.navigator.NavigationContext;
 import org.kie.dockerui.client.widgets.container.navigator.NavigationWorkflowStep;
 import org.kie.dockerui.client.widgets.container.navigator.item.CompositeNavigationItem;
+import org.kie.dockerui.client.widgets.container.navigator.item.DateNavigationItem;
 import org.kie.dockerui.client.widgets.container.navigator.item.NavigationItem;
 import org.kie.dockerui.shared.KieImageTypeManager;
 import org.kie.dockerui.shared.model.KieContainer;
@@ -67,25 +68,34 @@ public class KieAppVersionStep extends AbstractStep {
                             }
                             
                             String itemTitle;
-                            String itemText;
+                            String itemText = null;
+                            int _month = 0;
+                            int _day = 0;
                             if (tagDate != null) {
                                 final String tagDayNumber = ClientUtils.formatImageDateTag(tagDate, "d");
-                                itemTitle = ClientUtils.formatImageDateTag(tagDate, "EEE, MMM d");
-                                itemText = new SafeHtmlBuilder()
-                                        .appendEscaped(tagDayNumber)
-                                        .toSafeHtml().asString();
+                                final String tagMonthNumber = ClientUtils.formatImageDateTag(tagDate, "M");
+                                _month = Integer.decode(tagMonthNumber);
+                                _day = Integer.decode(tagDayNumber);
+                                
                             } else {
                                 itemText = Constants.INSTANCE.noDateTagInfo();
-                                itemTitle = new SafeHtmlBuilder().appendEscaped(version)
-                                        .toSafeHtml().asString();
                             }
-                            
+
+                            itemTitle = new SafeHtmlBuilder().appendEscaped(version)
+                                    .toSafeHtml().asString();
+
                             List<NavigationItem> items = itemsPerVersion.get(version);
                             if (items == null) {
                                 items = new ArrayList<>();
                             }
 
-                            NavigationItem item = createNavigationItem(tag, itemTitle, itemText, Images.INSTANCE.calendarEmptyIcon().getSafeUri(), cCount);
+                            NavigationItem item = null;
+                            if (itemText != null) {
+                                item = createDefaultNavigationItem(tag, itemTitle, itemText, Images.INSTANCE.calendarEmptyIcon().getSafeUri(), cCount);
+                            } else {
+                                item = createDateNavigationItem(tag, itemTitle, _month, _day, cCount);
+                            }
+                            
                             if (item != null) {
                                 GWT.log("Added navigation item for tag " + tag);
                                 items.add(item);
@@ -100,7 +110,6 @@ public class KieAppVersionStep extends AbstractStep {
             }
 
             tagsConsumed.clear();
-            final SafeUri imageUri = ClientUtils.getImageUri(kieAppType);
 
             if (!itemsPerVersion.isEmpty()) {
                 for (final Map.Entry<String, List<NavigationItem>> entry : itemsPerVersion.entrySet()) {
@@ -122,16 +131,6 @@ public class KieAppVersionStep extends AbstractStep {
                         public String getTitle() {
                             return new SafeHtmlBuilder().appendEscaped(kieAppType.getName())
                                     .appendEscaped(" - ").appendEscaped(version).toSafeHtml().asString();
-                        }
-
-                        @Override
-                        public String getText() {
-                            return null;
-                        }
-
-                        @Override
-                        public SafeUri getImageUri() {
-                            return imageUri;
                         }
 
                         @Override

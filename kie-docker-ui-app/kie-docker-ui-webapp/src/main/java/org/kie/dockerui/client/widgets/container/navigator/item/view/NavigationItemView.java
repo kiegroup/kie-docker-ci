@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.dockerui.client.widgets.container.navigator.item;
+package org.kie.dockerui.client.widgets.container.navigator.item.view;
 
 import com.github.gwtbootstrap.client.ui.Heading;
 import com.github.gwtbootstrap.client.ui.Image;
@@ -31,6 +31,10 @@ import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 import org.kie.dockerui.client.resources.i18n.Constants;
+import org.kie.dockerui.client.widgets.container.navigator.item.DefaultNavigationItem;
+import org.kie.dockerui.client.widgets.container.navigator.item.NavigationItem;
+import org.kie.dockerui.client.widgets.container.navigator.item.view.event.NavigationItemSelectedEvent;
+import org.kie.dockerui.client.widgets.container.navigator.item.view.event.NavigationItemSelectedEventHandler;
 
 public class NavigationItemView extends Composite {
 
@@ -58,20 +62,11 @@ public class NavigationItemView extends Composite {
     @UiField
     Image image;
     
-    private int size = 50;
+    private int size = 150;
     private String emptyText = "0";
     private String emptyTextTitle = Constants.INSTANCE.runningContainersCount();
 
-    public static NavigationItemView build(final NavigationItemSelectedEventHandler handler) {
-        final NavigationItemView navigationItemView = GWT.create(NavigationItemView.class);
-        navigationItemView.setEmptyText(Constants.INSTANCE.newLiteral(), Constants.INSTANCE.createNewForThisType());
-        final Style style = navigationItemView.getElement().getStyle();
-        style.setWidth(200, Style.Unit.PX);
-        style.setHeight(200, Style.Unit.PX);
-        navigationItemView.setImageSizePx(150);
-        navigationItemView.addNavigationItemSelectedEventHandler(handler);
-        return navigationItemView;
-    }
+    
     
     @UiConstructor
     public NavigationItemView() {
@@ -84,12 +79,12 @@ public class NavigationItemView extends Composite {
         this.emptyTextTitle = title;
     }
 
-    public void show(final NavigationItem navigationItem) {
-        final String id = navigationItem.getId();
-        final String _title = navigationItem.getTitle();
-        final int  cCount = navigationItem.getContainersCount();
-        final String _text = navigationItem.getText();
-        final SafeUri imageUri = navigationItem.getImageUri();
+    public void show(final DefaultNavigationItem defaultNavigationItem) {
+        final String id = defaultNavigationItem.getId();
+        final String _title = defaultNavigationItem.getTitle();
+        final int  cCount = defaultNavigationItem.getContainersCount();
+        final String _text = defaultNavigationItem.getText();
+        final SafeUri imageUri = defaultNavigationItem.getImageUri();
         show(id, _title, _text, imageUri, cCount);
         mainPanel.setVisible(true);
     }
@@ -164,37 +159,6 @@ public class NavigationItemView extends Composite {
     
     public void setImageSizePx(int size) {
         this.size = size;
-    }
-
-    public interface NavigationItemSelectedEventHandler extends EventHandler
-    {
-        void onNavigationItemSelected(NavigationItemSelectedEvent event);
-    }
-
-    public static class NavigationItemSelectedEvent extends GwtEvent<NavigationItemSelectedEventHandler> {
-
-        public static Type<NavigationItemSelectedEventHandler> TYPE = new Type<NavigationItemSelectedEventHandler>();
-
-        private String id;
-
-        public NavigationItemSelectedEvent(final String id) {
-            super();
-            this.id = id;
-        }
-
-        @Override
-        public Type getAssociatedType() {
-            return TYPE;
-        }
-
-        @Override
-        protected void dispatch(NavigationItemSelectedEventHandler handler) {
-            handler.onNavigationItemSelected(this);
-        }
-
-        public String getId() {
-            return id;
-        }
     }
 
     public HandlerRegistration addNavigationItemSelectedEventHandler(final NavigationItemSelectedEventHandler handler) {

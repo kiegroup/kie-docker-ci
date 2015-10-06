@@ -31,9 +31,10 @@ import com.google.gwt.user.client.ui.*;
 import org.kie.dockerui.client.KieClientManager;
 import org.kie.dockerui.client.Log;
 import org.kie.dockerui.client.widgets.container.navigator.item.CompositeNavigationItem;
-import org.kie.dockerui.client.widgets.container.navigator.item.CompositeNavigationItemView;
 import org.kie.dockerui.client.widgets.container.navigator.item.NavigationItem;
-import org.kie.dockerui.client.widgets.container.navigator.item.NavigationItemView;
+import org.kie.dockerui.client.widgets.container.navigator.item.view.NavigationItemViewBuilder;
+import org.kie.dockerui.client.widgets.container.navigator.item.view.event.NavigationItemSelectedEvent;
+import org.kie.dockerui.client.widgets.container.navigator.item.view.event.NavigationItemSelectedEventHandler;
 import org.kie.dockerui.client.widgets.container.navigator.workflow.KieAppStep;
 import org.kie.dockerui.client.widgets.container.navigator.workflow.KieAppVersionStep;
 import org.kie.dockerui.client.widgets.container.navigator.workflow.KieLastStep;
@@ -237,19 +238,16 @@ public class KieContainersNavigator extends Composite {
             Widget view = null;
             
             // Composited items view.
+            boolean isActive = false;
             if (item instanceof CompositeNavigationItem) {
 
-                boolean isFirstCompositeItemView = false;
                 if (hPanel == null) {
                     hPanel = new Accordion();
-                    isFirstCompositeItemView = true;
+                    isActive = true;
                     typesPanel.add(hPanel);
                 }
 
-                view = buildCompositeNavigationItem( isFirstCompositeItemView, (CompositeNavigationItem) item);
-
-
-                // Single item view grid.
+            // Single item view grid.
             } else {
                 
                 if (c == 0) {
@@ -257,41 +255,31 @@ public class KieContainersNavigator extends Composite {
                     hPanel.setWidth("100%");
                     typesPanel.add(hPanel);
                 }
-                view = buildNavigationItemView(item);
+                
                 if ( c == ( itemsPerRow - 1) ) c = 0;
                 else c++;
                 
-            } 
+            }
+
+            view = NavigationItemViewBuilder.build(item, isActive, navigationItemSelectedEventHandler);
             
+
             // Add the item/composite into the parent.
             hPanel.add(view);
         }
         typesPanel.setVisible(true);
     }
 
-    private NavigationItemView buildNavigationItemView(final NavigationItem item) {
-        final NavigationItemView itemView = NavigationItemView.build(navigationItemSelectedEventHandler);
-        itemView.getElement().getStyle().setMarginLeft(50, Style.Unit.PX);
-        itemView.show(item);
-        return itemView;
-    }
-    
-    private CompositeNavigationItemView buildCompositeNavigationItem(final boolean isDefaultOpen, final CompositeNavigationItem compositeNavigationItem) {
-        final CompositeNavigationItemView accordionGroup = CompositeNavigationItemView.build(isDefaultOpen, navigationItemSelectedEventHandler);
-        accordionGroup.show(compositeNavigationItem);
-        return accordionGroup;
-    }
-
-    private void updateBreadCrumb() {
-        breadcrumb.show(steps, context);
-    }
-    
     private final NavigationBreadCrumbView.NavigationBreadCrumbEventHandler navigationBreadCrumbEventHandler = new NavigationBreadCrumbView.NavigationBreadCrumbEventHandler() {
         @Override
         public void onNavigateTo(final NavigationBreadCrumbView.NavigationBreadCrumbEvent event) {
             navigateToStepIndex(event.getIndex());
         }
     };
+    
+    private void updateBreadCrumb() {
+        breadcrumb.show(steps, context);
+    }
     
     private void navigateNext(final String navigationItemId) {
         if (navigationItemId != null) {
@@ -302,7 +290,7 @@ public class KieContainersNavigator extends Composite {
         }
         showStepView();
     }
-    
+
     private void navigateToStepIndex(final int index) {
         GWT.log("Navigate to step with index " + index + ".");
         int size = steps.size();
@@ -338,9 +326,9 @@ public class KieContainersNavigator extends Composite {
         breadcrumb.clear();
     }
 
-    private final NavigationItemView.NavigationItemSelectedEventHandler navigationItemSelectedEventHandler = new NavigationItemView.NavigationItemSelectedEventHandler() {
+    private final NavigationItemSelectedEventHandler navigationItemSelectedEventHandler = new NavigationItemSelectedEventHandler() {
         @Override
-        public void onNavigationItemSelected(NavigationItemView.NavigationItemSelectedEvent event) {
+        public void onNavigationItemSelected(NavigationItemSelectedEvent event) {
             final String navigationItemId = event.getId();
             navigateNext(navigationItemId);
         }

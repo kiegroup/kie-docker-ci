@@ -2,11 +2,10 @@ package org.kie.dockerui.client.widgets.container.navigator.item;
 
 import com.google.gwt.safehtml.shared.SafeUri;
 
-public interface NavigationItem {
+public interface DefaultNavigationItem extends NavigationItem {
     
-    String getId();
+    String getText();
 
-    String getTitle();
+    SafeUri getImageUri();
 
-    int getContainersCount();
 }

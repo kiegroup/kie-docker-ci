@@ -57,7 +57,7 @@ public class KieDbmsStep extends AbstractStep {
             }
 
             final SafeUri imageUri = ClientUtils.getImageUri(dbmsType);
-            final NavigationItem item = createNavigationItem(dbmsType.getId(), dbmsType.getName(), null, imageUri, cCount);
+            final NavigationItem item = createDefaultNavigationItem(dbmsType.getId(), dbmsType.getName(), null, imageUri, cCount);
             if (item != null) {
                 result.add(item);
             }

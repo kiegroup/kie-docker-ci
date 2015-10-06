@@ -64,7 +64,7 @@ public class KieAppServerStep extends AbstractStep {
                 }
 
                 final SafeUri imageUri = ClientUtils.getImageUri(appServer);
-                final NavigationItem item = createNavigationItem(appServer.getId(), appServer.getName(), null, imageUri, cCount);
+                final NavigationItem item = createDefaultNavigationItem(appServer.getId(), appServer.getName(), null, imageUri, cCount);
                 if (item != null) {
                     result.add(item);
                 }

@@ -92,7 +92,7 @@ public class KieAppStep extends AbstractStep {
             final String title = type.getName();
             final SafeUri imageUri = ClientUtils.getImageUri(type);
             final int cCount = countContainers(context, type);
-            result = createNavigationItem(id, title, null, imageUri, cCount);
+            result = createDefaultNavigationItem(id, title, null, imageUri, cCount);
         }
         
         return result;

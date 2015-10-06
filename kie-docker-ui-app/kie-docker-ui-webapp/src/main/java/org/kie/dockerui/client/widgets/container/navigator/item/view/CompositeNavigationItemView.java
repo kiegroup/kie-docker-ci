@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.dockerui.client.widgets.container.navigator.item;
+package org.kie.dockerui.client.widgets.container.navigator.item.view;
 
 import com.github.gwtbootstrap.client.ui.AccordionGroup;
 import com.github.gwtbootstrap.client.ui.Column;
@@ -29,6 +29,11 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import org.kie.dockerui.client.resources.i18n.Constants;
+import org.kie.dockerui.client.widgets.container.navigator.item.CompositeNavigationItem;
+import org.kie.dockerui.client.widgets.container.navigator.item.DateNavigationItem;
+import org.kie.dockerui.client.widgets.container.navigator.item.NavigationItem;
+import org.kie.dockerui.client.widgets.container.navigator.item.view.event.NavigationItemSelectedEvent;
+import org.kie.dockerui.client.widgets.container.navigator.item.view.event.NavigationItemSelectedEventHandler;
 
 import java.util.List;
 
@@ -38,12 +43,7 @@ public class CompositeNavigationItemView extends Composite {
     interface CompositeNavigationItemViewBinder extends UiBinder<Widget, CompositeNavigationItemView> {}
     private static CompositeNavigationItemViewBinder uiBinder = GWT.create(CompositeNavigationItemViewBinder.class);
 
-    public static CompositeNavigationItemView build(final boolean isDefaultOpen, final NavigationItemView.NavigationItemSelectedEventHandler handler) {
-        final CompositeNavigationItemView navigationItemView = GWT.create(CompositeNavigationItemView.class);
-        navigationItemView.addNavigationItemSelectedEventHandler(handler);
-        navigationItemView.accordionGroup.setDefaultOpen(isDefaultOpen);
-        return navigationItemView;
-    }
+    
 
     @UiField
     AccordionGroup accordionGroup;
@@ -103,19 +103,17 @@ public class CompositeNavigationItemView extends Composite {
     }
 
     private void showItemView(final Panel parent, final NavigationItem item) {
-        final NavigationItemView itemView = NavigationItemView.build(navigationItemSelectedEventHandler);
-        itemView.getElement().getStyle().setMarginLeft(50, Style.Unit.PX);
-        itemView.show(item);
+        final Widget itemView = NavigationItemViewBuilder.build(item, true, navigationItemSelectedEventHandler);
         parent.add(itemView);
     }
 
-    public HandlerRegistration addNavigationItemSelectedEventHandler(final NavigationItemView.NavigationItemSelectedEventHandler handler) {
-        return addHandler(handler, NavigationItemView.NavigationItemSelectedEvent.TYPE);
+    public HandlerRegistration addNavigationItemSelectedEventHandler(final NavigationItemSelectedEventHandler handler) {
+        return addHandler(handler, NavigationItemSelectedEvent.TYPE);
     }
 
-    private final NavigationItemView.NavigationItemSelectedEventHandler navigationItemSelectedEventHandler = new NavigationItemView.NavigationItemSelectedEventHandler() {
+    private final NavigationItemSelectedEventHandler navigationItemSelectedEventHandler = new NavigationItemSelectedEventHandler() {
         @Override
-        public void onNavigationItemSelected(NavigationItemView.NavigationItemSelectedEvent event) {
+        public void onNavigationItemSelected(NavigationItemSelectedEvent event) {
             CompositeNavigationItemView.this.fireEvent(event);
         }
     };

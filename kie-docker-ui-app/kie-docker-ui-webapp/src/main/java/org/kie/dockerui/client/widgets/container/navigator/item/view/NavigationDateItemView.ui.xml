@@ -1,0 +1,35 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:com.github.gwtbootstrap.client.ui" xmlns:G="http://www.w3.org/1999/html"
+    >
+
+  <ui:with field="i18n" type="org.kie.dockerui.client.resources.i18n.Constants"/>
+
+  <ui:style>
+    .mainPanel {
+      cursor: pointer;
+    }
+    .image {
+      cursor: pointer;
+      margin-top: 5px;
+    }
+    .countText {
+      width: 20px;
+      font-size: x-small;
+      padding: 2px;
+      background-color: whitesmoke;
+      border-radius: 25px;
+    }
+  </ui:style>
+
+  <g:FocusPanel ui:field="mainPanel" addStyleNames="{style.mainPanel}" >
+    <g:FlowPanel>
+      <b:Heading size="5" ui:field="month"/>
+      <g:HTML ui:field="countText" addStyleNames="{style.countText}"/>
+      <b:Image addStyleNames="{style.image}" ui:field="image"/>
+      <b:Heading size="1" ui:field="day"/>
+    </g:FlowPanel>
+  </g:FocusPanel>
+      
+</ui:UiBinder>
