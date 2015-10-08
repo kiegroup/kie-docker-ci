@@ -90,7 +90,7 @@ public class NavigationDateItemView extends Composite {
     private void show(final String id, final int _day, final int _month, final int containersRunningCount) {
         showRunningContainers(id, containersRunningCount);
         day.setText(Integer.toString(_day));
-        final String _m = calendarModel.formatMonth(_month);
+        final String _m = calendarModel.formatMonth(_month - 1);
         month.setText(_m);
 
         // Positioning.
