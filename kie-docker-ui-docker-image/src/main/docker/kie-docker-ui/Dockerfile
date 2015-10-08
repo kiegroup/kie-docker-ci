@@ -5,8 +5,7 @@ FROM tomcat:7.0.61-jre7
 MAINTAINER "Roger Martinez" "romartin@redhat.com"
 
 ####### ENVIRONMENT ############
-ENV JAVA_OPTS -XX:MaxPermSize=256m -Xms256m -Xmx512m
-ENV CATALINA_OPTS -Xmx512M -XX:MaxPermSize=256m -Djava.security.egd=file:/dev/./urandom
+ENV CATALINA_OPTS -Xmx1g -XX:MaxPermSize=256m -Djava.security.egd=file:/dev/./urandom
 ENV KIE_DOCKER_SERVER_PRIVATE 172.17.42.1
 ENV KIE_DOCKER_SERVER_PUBLIC kieci01-docker.lab.eng.brq.redhat.com
 # ENV KIE_DOCKER_ARTIFACTS_PATH
