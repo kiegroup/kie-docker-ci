@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>16</version>
+    <version>19</version>
   </parent>
 
   <groupId>org.kie.docker</groupId>
@@ -13,6 +13,22 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>KIE :: Docker Continuous Integration</name>
+
+  <properties>
+    <version.org.wildfly>10.0.0.Final</version.org.wildfly>
+    <version.org.slf4j>1.7.2</version.org.slf4j>
+    <version.com.github.docker-java>1.2.0</version.com.github.docker-java>
+    <version.com.allen-sauer.gwt.dnd>3.3.4</version.com.allen-sauer.gwt.dnd>
+    <version.com.bradrydzewski.gwt_cal>0.9.3.1</version.com.bradrydzewski.gwt_cal>
+    <version.org.commons.io>2.3</version.org.commons.io>
+    <version.com.google.gwt>2.7.0</version.com.google.gwt>
+    <version.com.github.gwtbootstrap>2.2.1.0</version.com.github.gwtbootstrap>
+    <version.org.mortbay.jetty>6.1.25</version.org.mortbay.jetty>
+    <version.mysql>5.1.35</version.mysql>
+    <version.postgresql>9.1-901-1.jdbc4</version.postgresql>
+    <version.com.fasterxml.jackson.core>2.4.0</version.com.fasterxml.jackson.core>
+    <version.com.fasterxml.jackson.module>2.1.2</version.com.fasterxml.jackson.module>
+  </properties>
 
   <!-- Bootstrap repository to locate the parent pom when the parent pom has not been build locally. -->
   <repositories>
@@ -33,7 +49,7 @@
   </repositories>
 
   <modules>
-    <module>kie-docker-ui-app</module>
+    <module>kie-docker-ui-webapp</module>
     <module>kie-docker-ui-docker-image</module>
   </modules>
 
@@ -41,21 +57,141 @@
     <dependencies>
       <dependency>
         <groupId>org.kie.docker</groupId>
-        <artifactId>kie-docker-ui-distros</artifactId>
+        <artifactId>kie-docker-ui-webapp</artifactId>
         <version>${project.version}</version>
         <type>war</type>
-        <classifier>tomcat7</classifier>
+        <classifier>wildfly10</classifier>
       </dependency>
+
+      <dependency>
+        <groupId>com.github.docker-java</groupId>
+        <artifactId>docker-java</artifactId>
+        <version>${version.com.github.docker-java}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.allen-sauer.gwt.dnd</groupId>
+        <artifactId>gwt-dnd</artifactId>
+        <version>${version.com.allen-sauer.gwt.dnd}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.bradrydzewski</groupId>
+        <artifactId>gwt-cal</artifactId>
+        <version>${version.com.bradrydzewski.gwt_cal}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${version.org.slf4j}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>${version.org.slf4j}</version>
+      </dependency>
+
+      <!-- Use same commons-io:commons-io artifact version as docker java client, if not, runtime exceptions appear. -->
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${version.org.commons.io}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.gwt</groupId>
+        <artifactId>gwt-user</artifactId>
+        <version>${version.com.google.gwt}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.gwt</groupId>
+        <artifactId>gwt-servlet</artifactId>
+        <version>${version.com.google.gwt}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.github.gwtbootstrap</groupId>
+        <artifactId>gwt-bootstrap</artifactId>
+        <version>${version.com.github.gwtbootstrap}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.kie.docker</groupId>
+        <artifactId>kie-docker-ui-webapp</artifactId>
+        <version>${project.version}</version>
+        <type>war</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty</artifactId>
+        <version>${version.org.mortbay.jetty}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${version.mysql}</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${version.postgresql}</version>
+        <type>jar</type>
+      </dependency>
+
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${version.com.fasterxml.jackson.core}</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${version.com.fasterxml.jackson.core}</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>${version.com.fasterxml.jackson.core}</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.module</groupId>
+        <artifactId>jackson-module-jaxb-annotations</artifactId>
+        <version>${version.com.fasterxml.jackson.module}</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.jaxrs</groupId>
+        <artifactId>jackson-jaxrs-json-provider</artifactId>
+        <version>${version.com.fasterxml.jackson.module}</version>
+        <type>jar</type>
+      </dependency>
+
     </dependencies>
+
   </dependencyManagement>
 
   <build>
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.jolokia</groupId>
+          <groupId>io.fabric8</groupId>
           <artifactId>docker-maven-plugin</artifactId>
-          <version>0.13.3</version>
+          <version>0.14.2</version>
         </plugin>
       </plugins>
     </pluginManagement>

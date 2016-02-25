@@ -1,24 +1,21 @@
 ####### BASE ############
-FROM tomcat:7.0.61-jre7
+FROM jboss/wildfly:10.0.0.Final
 
 ####### MAINTAINER ############
-MAINTAINER "Roger Martinez" "romartin@redhat.com"
+MAINTAINER "Petr Široký" "psiroky@redhat.com"
 
 ####### ENVIRONMENT ############
-ENV CATALINA_OPTS -Xmx1g -XX:MaxPermSize=256m -Djava.security.egd=file:/dev/./urandom
+ENV JAVA_OPTS -Xmx1g -XX:MaxPermSize=128m -Djava.security.egd=file:/dev/urandom
 ENV KIE_DOCKER_SERVER_PRIVATE 172.17.42.1
-ENV KIE_DOCKER_SERVER_PUBLIC kieci01-docker.lab.eng.brq.redhat.com
-# ENV KIE_DOCKER_ARTIFACTS_PATH
-ENV KIE_DOCKER_JENKINS_URL https://brms-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/kie-docker-images/
+ENV KIE_DOCKER_SERVER_PUBLIC kieci-02.lab.eng.brq.redhat.com
+ENV KIE_DOCKER_JENKINS_URL https://kie-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/view/Docker/
 
 ####### WEBAPP ############
-ADD maven/kie-docker-ui-webapp.war $CATALINA_HOME/webapps/kie-docker-ui-webapp.war
-RUN unzip -q -d $CATALINA_HOME/webapps/kie-docker-ui-webapp $CATALINA_HOME/webapps/kie-docker-ui-webapp.war && \
-rm -rf $CATALINA_HOME/webapps/kie-docker-ui-webapp.war
+ADD maven/kie-docker-ui-webapp.war $JBOSS_HOME/standalone/deployments/
 
 ###### START SCRIPT #########
-ADD start_kie-docker-ui.sh $CATALINA_HOME/bin/start_kie-docker-ui.sh
+ADD start-kie-docker-ui.sh $JBOSS_HOME/bin/start-kie-docker-ui.sh
 
 ####### RUNNING KIE DOCKER UI ############
-WORKDIR $CATALINA_HOME/bin
-CMD ["./start_kie-docker-ui.sh"]
+WORKDIR $JBOSS_HOME/bin
+CMD ["./start-kie-docker-ui.sh"]

@@ -2,16 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>kie-docker-ui-app</artifactId>
     <groupId>org.kie.docker</groupId>
+    <artifactId>kie-docker-ci</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
   <artifactId>kie-docker-ui-webapp</artifactId>
   <packaging>war</packaging>
-  <name>KIE - Docker UI Webapp</name>
+  <name>KIE :: Docker UI Webapp</name>
 
   <dependencies>
 
@@ -80,9 +80,7 @@
   </dependencies>
   
   <build>
-
     <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
-    
     <plugins>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
@@ -151,7 +149,6 @@
           </execution>
         </executions>
         <configuration>
-          <finalName>kie-dockerui-webapp-${project.version}</finalName>
           <descriptors>
             <descriptor>${project.basedir}/src/main/assembly/assembly-wildfly10.xml</descriptor>
           </descriptors>
@@ -166,8 +163,68 @@
         <artifactId>cargo-maven2-plugin</artifactId>
         <version>1.4.18</version>
         <configuration>
-
+          <container>
+            <containerId>wildfly9x</containerId>
+            <type>installed</type>
+            <artifactInstaller>
+              <groupId>org.wildfly</groupId>
+              <artifactId>wildfly-dist</artifactId>
+              <version>${version.org.wildfly}</version>
+            </artifactInstaller>
+            <systemProperties>
+              <!-- Fixes issue when Tomcat or WildFly hangs during deployment due to insufficient amount of entropy.
+                   The property specifies less secure source of entropy, which is fine for testing.
+                   See https://wiki.apache.org/tomcat/HowTo/FasterStartUp#Entropy_Source for more info -->
+              <java.security.egd>file:/dev/./urandom</java.security.egd>
+            </systemProperties>
+          </container>
+          <deployables>
+            <deployable>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>kie-docker-ui-webapp</artifactId>
+              <classifier>wildfly10</classifier>
+              <type>war</type>
+              <properties>
+                <context>kie-docker-ui-webapp</context>
+              </properties>
+              <pingURL>http://localhost:8080/kie-docker-ui-webapp</pingURL>
+              <pingTimeout>30000</pingTimeout>
+            </deployable>
+          </deployables>
+          <configuration>
+            <properties>
+              <cargo.servlet.port>8080</cargo.servlet.port>
+            </properties>
+          </configuration>
         </configuration>
+        <executions>
+          <execution>
+            <id>start-container</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>start</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>stop-container</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     
