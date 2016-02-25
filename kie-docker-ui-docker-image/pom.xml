@@ -2,21 +2,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.kie.docker</groupId>
     <artifactId>kie-docker-ci</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
   <artifactId>kie-docker-ui-docker-image</artifactId>
   <packaging>pom</packaging>
-  <name>KIE Docker UI - Docker integration</name>
+  <name>KIE :: Docker UI Docker Container</name>
 
   <properties>
     <docker.kie.ui.repository>jboss-kie-util</docker.kie.ui.repository>
     <docker.kie.ui.name>kie-docker-ui</docker.kie.ui.name>
-    <kie.site.version>1.0</kie.site.version>
 
     <kie.dockerui.privateHost>docker-host.mycompany.org</kie.dockerui.privateHost>
     <kie.dockerui.publicHost>public-docker-host.mycompany.org</kie.dockerui.publicHost>
@@ -32,26 +31,31 @@
 
   <dependencies>
 
-    <!-- The KIE Docker UI for Tomcat7. -->
     <dependency>
       <groupId>org.kie.docker</groupId>
-      <artifactId>kie-docker-ui-distros</artifactId>
+      <artifactId>kie-docker-ui-webapp</artifactId>
       <type>war</type>
-      <classifier>tomcat7</classifier>
+      <classifier>wildfly10</classifier>
+      <version>1.0.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
-
   </dependencies>
 
   <build>
     <plugins>
 
       <plugin>
-        <groupId>org.jolokia</groupId>
+        <groupId>io.fabric8</groupId>
         <artifactId>docker-maven-plugin</artifactId>
         <configuration>
           <!-- Global configuration. -->
           <dockerHost>${docker.daemon.rest.url}</dockerHost>
-          <registry>${docker.registry}</registry>
+          <!--<registry>${docker.registry}</registry>-->
           <!-- Although no authentication on registry, set empty values. If not, plugin push goal fails. -->
           <authConfig>
             <username/>
@@ -60,10 +64,7 @@
           <useColor>true</useColor>
           <logDate>default</logDate>
           <verbose>true</verbose>
-
           <images>
-
-            <!-- KIE Docker UI for Tomcat7. -->
             <image>
               <name>${docker.kie.ui.repository}/kie-docker-ui:${docker.kie.ui.version}-${timestamp}</name>
               <alias>kie-docker-ui-${docker.kie.ui.version}</alias>
@@ -74,7 +75,7 @@
                 </tags>
                 <assembly>
                   <dockerFileDir>${project.basedir}/src/main/docker/kie-docker-ui</dockerFileDir>
-                  <descriptor>${project.basedir}/src/main/assembly/assembly-kie-docker-ui-tomcat7.xml</descriptor>
+                  <descriptor>${project.basedir}/src/main/assembly/assembly-kie-docker-ui-wildfly10.xml</descriptor>
                 </assembly>
               </build>
               <run>
@@ -94,7 +95,7 @@
                   </bind>
                 </volumes>
                 <wait>
-                  <log>Deployment of web application directory /usr/local/tomcat/webapps/kie-docker-ui-webapp has finished</log>
+                  <log>Deployed "kie-docker-ui-webapp\.war"</log>
                   <time>${docker.run.timeout}</time>
                 </wait>
                 <log>
@@ -104,32 +105,25 @@
                 </log>
               </run>
             </image>
-
           </images>
         </configuration>
-
         <executions>
-
           <execution>
-            <id>kiedockerui-build</id>
+            <id>build-docker-container</id>
             <phase>pre-integration-test</phase>
             <goals>
               <goal>build</goal>
             </goals>
           </execution>
-
           <execution>
-            <id>kiedockerui-start</id>
+            <id>start-docker-container</id>
             <phase>post-integration-test</phase>
             <goals>
               <goal>start</goal>
             </goals>
           </execution>
-
         </executions>
-
       </plugin>
-
     </plugins>
   </build>
 
