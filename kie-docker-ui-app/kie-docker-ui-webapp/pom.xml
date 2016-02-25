@@ -82,20 +82,25 @@
   <build>
 
     <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
-  
-    <resources>
-      <!-- Include src/main/java in order not to break the Eclipse GWT plug-in -->
-      <resource>
-        <directory>src/main/java</directory>
-      </resource>
-      <!-- Include module descriptors from src/main/resources in order not to break the Intellij GWT plug-in -->
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-    </resources>
     
     <plugins>
-      
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}</directory>
+              <includes>
+                <include>src/main/webapp/org.kie.dockerui.DockerUI/</include>
+                <include>src/main/webapp/WEB-INF/deploy/</include>
+                <include>src/main/webapp/WEB-INF/classes/</include>
+                <include>src/main/webapp/WEB-INF/lib/</include>
+                <include>**/gwt-unitCache/**</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
@@ -112,6 +117,7 @@
           <extraJvmArgs>-Xmx1024m -XX:CompileThreshold=7000 -XX:MaxPermSize=512M</extraJvmArgs>
           <noServer>false</noServer>
           <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
+          <hostedWebapp>src/main/webapp</hostedWebapp>
           <disableCastChecking>true</disableCastChecking>
           <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
         </configuration>
@@ -132,7 +138,37 @@
           </execution>
         </executions>
       </plugin>
-      
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <finalName>kie-dockerui-webapp-${project.version}</finalName>
+          <descriptors>
+            <descriptor>${project.basedir}/src/main/assembly/assembly-wildfly10.xml</descriptor>
+          </descriptors>
+          <archive>
+            <addMavenDescriptor>true</addMavenDescriptor>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <version>1.4.18</version>
+        <configuration>
+
+        </configuration>
+      </plugin>
     </plugins>
     
   </build>

@@ -10,32 +10,13 @@
   <packaging>pom</packaging>
   <name>KIE - Docker UI Web Application</name>
 
-  <!-- Bootstrap repository to locate the parent pom when the parent pom has not been build locally. -->
-  <repositories>
-    <repository>
-      <id>jboss-public-repository-group</id>
-      <name>JBoss Public Repository Group</name>
-      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
-      <layout>default</layout>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>daily</updatePolicy>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <modules>
     <module>kie-docker-ui-webapp</module>
-    <module>kie-docker-ui-distros</module>
   </modules>
   
   <properties>
     <version.org.slf4j>1.7.2</version.org.slf4j>
-    <version.com.github.docker_java>1.2.0</version.com.github.docker_java>
+    <version.com.github.docker-java>1.2.0</version.com.github.docker-java>
     <version.com.allen-sauer.gwt.dnd>3.3.4</version.com.allen-sauer.gwt.dnd>
     <version.com.bradrydzewski.gwt_cal>0.9.3.1</version.com.bradrydzewski.gwt_cal>
     <version.org.commons.io>2.3</version.org.commons.io>
@@ -55,7 +36,7 @@
       <dependency>
         <groupId>com.github.docker-java</groupId>
         <artifactId>docker-java</artifactId>
-        <version>${version.com.github.docker_java}</version>
+        <version>${version.com.github.docker-java}</version>
       </dependency>
 
       <dependency>
@@ -174,21 +155,4 @@
     
   </dependencyManagement>
   
-  <build>
-
-    <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
-    
-    <resources>
-      <!-- Include src/main/java in order not to break the Eclipse GWT plug-in -->
-      <resource>
-        <directory>src/main/java</directory>
-      </resource>
-      <!-- Include module descriptors from src/main/resources in order not to break the Intellij GWT plug-in -->
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-    </resources>
-    
-  </build>
-
 </project>
