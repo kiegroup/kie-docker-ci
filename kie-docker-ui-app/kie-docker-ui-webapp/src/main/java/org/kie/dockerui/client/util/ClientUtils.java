@@ -58,10 +58,24 @@ public class ClientUtils {
         return TEMPLATES.webAddress(protocol, host, httpPublicPort, contextPath).asString();
     }
 
+    public static String getDownloadURL(final Settings settings, final KieImage image) {
+        final String tag = image.getTags().iterator().next();
+        final String downloadURL = ClientUtils.getDownloadURL(settings, image.getType(),
+                    image.getRepository(),
+                    tag);
+        return downloadURL;
+    }
+
+    public static String getDownloadURL(final Settings settings, final KieContainer container) {
+        final String downloadURL = ClientUtils.getDownloadURL(settings, container.getType(), 
+                    container.getRepository(),
+                    container.getTag());
+        return downloadURL;
+    }
     
-    public static String getDownloadURL(final Settings settings, final KieImageType kieImageType, final KieImageType appServerType, final String tag) {
+    private static String getDownloadURL(final Settings settings, final KieImageType kieImageType, final String repository, final String tag) {
         final String artifactsPath = settings.getArtifactsPath();
-        final String artifactQualifier = KieImageTypeManager.getArtifactQualifier(kieImageType, appServerType);
+        final String artifactQualifier = repository.substring( repository.lastIndexOf("-") + 1 , repository.length() );
         final String absolutePath = artifactsPath + "/" + tag + "/" + kieImageType.getArtifactId() + "-" + tag + "-" + artifactQualifier + ".war";
         return _getDownloadURL(absolutePath);
     }

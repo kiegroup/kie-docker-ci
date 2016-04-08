@@ -119,8 +119,9 @@ public class KieContainerDetails extends Composite {
     @UiField
     AccordionGroup sshCommandGroup;
 
-    @UiField
-    AccordionGroup artifactVersionsGroup;
+    // TODO: Maven site disabled - Petr
+    // @UiField
+    // AccordionGroup artifactVersionsGroup;
 
     @UiField
     AccordionGroup webAddressGroup;
@@ -175,7 +176,7 @@ public class KieContainerDetails extends Composite {
         containerStatus.setValue(container.getStatus());
         containerIP.setValue(details.getIpAddress());
         final KieImageType type = container.getType();
-        artifactVersionsGroup.clear();
+        // artifactVersionsGroup.clear();
         if (type != null && KieImageCategory.KIEAPP.equals(type.getCategory())) {
             final String sshCommand = ClientUtils.getSSHCommand(container, details, settings);
             final String webAddress  = ClientUtils.getWebAddress(container, details, settings);
@@ -198,6 +199,11 @@ public class KieContainerDetails extends Composite {
             });
             sshCommandGroup.setVisible(true);
             webAddressGroup.setVisible(true);
+            
+            /* 
+            
+            // Maven Site disabled - Petr
+            
             final VerticalPanel p = new VerticalPanel();
             p.addStyleName(style.artifactVersions());
             final Frame f = new Frame(siteAddress);
@@ -218,6 +224,7 @@ public class KieContainerDetails extends Composite {
             p.add(b);
             artifactVersionsGroup.add(p);
             artifactVersionsGroup.setVisible(true);
+            */
 
             // Specify the password for the dbms container via environment variables.
             jdbcGroup.setVisible(false);
@@ -240,7 +247,7 @@ public class KieContainerDetails extends Composite {
             pullAddressGroup.setVisible(false);
             sshCommandGroup.setVisible(false);
             webAddressGroup.setVisible(false);
-            artifactVersionsGroup.setVisible(false);
+            // artifactVersionsGroup.setVisible(false);
             jdbcGroup.setVisible(false);
         }
         

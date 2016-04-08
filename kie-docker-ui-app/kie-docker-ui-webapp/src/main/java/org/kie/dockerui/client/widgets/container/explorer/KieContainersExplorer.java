@@ -435,9 +435,7 @@ public class KieContainersExplorer extends Composite {
 
         // Obtain current settings from client cache.
         final Settings settings = SettingsClientHolder.getInstance().getSettings();
-        final String downloadURL = ClientUtils.getDownloadURL(settings, container.getType(), 
-                container.getSubTypes() != null && !container.getSubTypes().isEmpty() ? container.getSubTypes().get(0) : null,
-                container.getTag());
+        final String downloadURL = ClientUtils.getDownloadURL(settings, container);
         GWT.log("Downloading artifact using URL = '" + downloadURL + "'");
         Window.open(downloadURL,"_blank","");
     }

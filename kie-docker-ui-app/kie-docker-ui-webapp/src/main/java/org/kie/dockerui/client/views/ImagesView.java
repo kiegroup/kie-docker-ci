@@ -466,10 +466,7 @@ public class ImagesView extends Composite {
         final Settings settings = SettingsClientHolder.getInstance().getSettings();
         final Set<String> tags = image.getTags();
         if (tags != null && !tags.isEmpty()) {
-            final String tag = tags.iterator().next();
-            final String downloadURL = ClientUtils.getDownloadURL(settings, image.getType(),
-                    image.getSubTypes() != null && !image.getSubTypes().isEmpty() ? image.getSubTypes().get(0) : null,
-                    tag);
+            final String downloadURL = ClientUtils.getDownloadURL(settings, image);
             GWT.log("Downloading artifact using URL = '" + downloadURL + "'");
             Window.open(downloadURL,"_blank","");
         }

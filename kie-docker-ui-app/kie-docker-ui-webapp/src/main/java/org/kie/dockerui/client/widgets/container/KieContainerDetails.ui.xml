@@ -131,10 +131,11 @@
           </b:WellForm>
         </b:AccordionGroup>
 
+        <!-- TODO: Maven Site disabled - Petr. -->
         <!-- Artifact version. -->
-        <b:AccordionGroup ui:field="artifactVersionsGroup" heading="{i18n.artifactVersions}" defaultOpen="false">
+        <!--<b:AccordionGroup ui:field="artifactVersionsGroup" heading="{i18n.artifactVersions}" defaultOpen="false">
 
-        </b:AccordionGroup>
+        </b:AccordionGroup>-->
         
         <!-- Container webapp URL. -->
         <b:AccordionGroup ui:field="webAddressGroup" heading="{i18n.webAddressUrl}" defaultOpen="false">

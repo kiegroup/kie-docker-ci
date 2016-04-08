@@ -68,9 +68,9 @@ public class KieImageTypeManager {
 
         // Check the app server used in kie apps containers.
         if (isKIEAppType(repository)) {
-            if (repository.endsWith("wildfly8")) return WildflyType.INSTANCE;
-            if (repository.endsWith("tomcat7")) return TomcatType.INSTANCE;
-            if (repository.endsWith("eap64")) return EAPType.INSTANCE;
+            if (repository.matches(".+wildfly\\d*")) return WildflyType.INSTANCE;
+            if (repository.matches(".+tomcat\\d*")) return TomcatType.INSTANCE;
+            if (repository.matches(".+eap\\d*")) return EAPType.INSTANCE;
         }
         return null;
     }
