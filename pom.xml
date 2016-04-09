@@ -15,6 +15,9 @@
   <name>KIE :: Docker Continuous Integration</name>
 
   <properties>
+    <!-- Java 8 required by WildFly 10 -->
+    <jdk.min.version>1.8</jdk.min.version>
+
     <version.org.wildfly>10.0.0.Final</version.org.wildfly>
     <version.org.slf4j>1.7.2</version.org.slf4j>
     <version.com.github.docker-java>1.2.0</version.com.github.docker-java>
