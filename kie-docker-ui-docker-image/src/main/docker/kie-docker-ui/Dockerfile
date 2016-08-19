@@ -5,7 +5,7 @@ FROM jboss/wildfly:10.0.0.Final
 MAINTAINER "Petr Široký" "psiroky@redhat.com"
 
 ####### ENVIRONMENT ############
-ENV JAVA_OPTS -Xmx1g -XX:MaxPermSize=128m -Djava.security.egd=file:/dev/urandom
+ENV JAVA_OPTS -Xmx1g -Djava.security.egd=file:/dev/urandom
 ENV KIE_DOCKER_SERVER_PRIVATE 172.17.42.1
 ENV KIE_DOCKER_SERVER_PUBLIC kieci-02.lab.eng.brq.redhat.com
 ENV KIE_DOCKER_JENKINS_URL https://kie-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/view/Docker/

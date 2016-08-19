@@ -17,32 +17,17 @@
   ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   ~ MA  02110-1301, USA.
   -->
-<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.0">
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
   <deployment>
-    <exclusions>
-      <module name="org.jboss.resteasy.resteasy-jackson-provider"/>
-    </exclusions>
+    <!-- Exclude JAXRS + RestEasy subsystems as it collides with transitive dependencies of docker-java client-->
+    <exclude-subsystems>
+      <subsystem name="resteasy"/>
+      <subsystem name="jaxrs"/>
+    </exclude-subsystems>
+
     <dependencies>
-
-      <!-- EAP alignement -->
-      <module name="javax.activation.api"/>
-      <module name="org.apache.commons.collections"/>
-      <module name="org.apache.commons.lang"/>
-      <module name="com.sun.xml.bind"/>
-      <module name="org.jboss.as.web"/>
-      <module name="org.joda.time"/>
-
-      <!-- Rest api and providers. -->
-      <module name="javax.ws.rs.api"/>
-      <module name="org.jboss.resteasy.resteasy-jackson2-provider" services="import"/>
-      
-      <!-- check 1.2 -->
       <module name="org.slf4j"/>
       <module name="org.slf4j.ext"/>
-
-      <!-- transitive dependencies -->
-      <module name="javax.servlet.api"/>
-      <module name="javax.validation.api"/>
     </dependencies>
   </deployment>
 </jboss-deployment-structure>

@@ -42,7 +42,6 @@
       <unpack>true</unpack>
       <unpackOptions>
         <excludes>
-
           <!-- SDM related. -->
           <exclude>**/*devmode.js</exclude>
           
@@ -76,35 +75,24 @@
           <exclude>WEB-INF/lib/cdi-api*.jar</exclude>
           <!--<exclude>WEB-INF/lib/javax*.jar</exclude>-->
           <exclude>WEB-INF/lib/jboss-interceptors-api_1-*.jar</exclude>
-          <exclude>WEB-INF/lib/resteasy*.jar</exclude>
+          <!--<exclude>WEB-INF/lib/resteasy*.jar</exclude>-->
 
           <exclude>WEB-INF/lib/activation-*.jar</exclude>
-          <!-- <exclude>WEB-INF/lib/cdi-api*.jar</exclude> ALREADY EXCLUDED-->
-          <exclude>WEB-INF/lib/commons-collections-*.jar</exclude>
-          <!-- Exclude commons-lang-* as this is bundled with Wildfly, but don't exclude commons-lang3-* as this is not bundled with Wildfly -->
-          <exclude>WEB-INF/lib/commons-lang-*.jar</exclude>
-          <exclude>WEB-INF/lib/commons-codec-*.jar</exclude>
-          <exclude>WEB-INF/lib/commons-io-*.jar</exclude>
-          <exclude>WEB-INF/lib/jaxb-impl-*.jar</exclude>
-          <exclude>WEB-INF/lib/jaxb-xjc-*.jar</exclude>
           <exclude>WEB-INF/lib/org.osgi.core-*.jar</exclude>
           <exclude>WEB-INF/lib/h2-*.jar</exclude>
-          <exclude>WEB-INF/lib/jettison-*.jar</exclude>
-          <exclude>WEB-INF/lib/joda-time-*.jar</exclude>
           <exclude>WEB-INF/lib/xalan-*.jar</exclude>
           <exclude>WEB-INF/lib/xercesImpl-*.jar</exclude>
-          <exclude>WEB-INF/lib/httpcore_*.jar</exclude>
+          <!--<exclude>WEB-INF/lib/httpcore_*.jar</exclude>-->
           <exclude>WEB-INF/lib/validation-api-*.jar</exclude>
 
           <!-- Logging -->
           <!-- Following slf4j-* and jboss-log* jars are used directly from EAP installation.
-               Dependendency on them is defined in jboss-deployment-structure.xml -->
+               Dependency on them is defined in jboss-deployment-structure.xml -->
           <exclude>WEB-INF/lib/slf4j-api-*.jar</exclude>
           <exclude>WEB-INF/lib/slf4j-ext-*.jar</exclude>
           <exclude>WEB-INF/lib/jcl-over-slf4j-*.jar</exclude>
           <exclude>WEB-INF/lib/jboss-logging-*.jar</exclude>
           <exclude>WEB-INF/lib/jboss-logmanager*.jar</exclude>
-
         </excludes>
       </unpackOptions>
       <useStrictFiltering>false</useStrictFiltering>

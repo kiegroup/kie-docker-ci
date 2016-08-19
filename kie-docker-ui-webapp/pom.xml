@@ -14,6 +14,15 @@
   <name>KIE :: Docker UI Webapp</name>
 
   <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>com.github.docker-java</groupId>
@@ -51,16 +60,7 @@
       <artifactId>gwt-bootstrap</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-    </dependency>
-    
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
@@ -76,7 +76,7 @@
       <artifactId>jetty</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
   </dependencies>
   
   <build>
@@ -112,7 +112,7 @@
           <force>true</force>
           <strict>true</strict>
           <runTarget>docker-ui.html</runTarget>
-          <extraJvmArgs>-Xmx1024m -XX:CompileThreshold=7000 -XX:MaxPermSize=512M</extraJvmArgs>
+          <extraJvmArgs>-Xmx1024m -XX:CompileThreshold=7000</extraJvmArgs>
           <noServer>false</noServer>
           <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
           <hostedWebapp>src/main/webapp</hostedWebapp>
@@ -161,10 +161,10 @@
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
-        <version>1.4.18</version>
+        <version>1.5.0</version>
         <configuration>
           <container>
-            <containerId>wildfly9x</containerId>
+            <containerId>wildfly10x</containerId>
             <type>installed</type>
             <artifactInstaller>
               <groupId>org.wildfly</groupId>
