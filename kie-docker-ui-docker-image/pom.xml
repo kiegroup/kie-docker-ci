@@ -24,7 +24,7 @@
     <!-- Configurable properties for the build. -->
     <docker.daemon.rest.url>http://localhost:2375</docker.daemon.rest.url>
     <docker.registry>localhost:5000</docker.registry>
-    <docker.kie.ui.version>1.0.0</docker.kie.ui.version>
+    <docker.kie.ui.version>1.0.1</docker.kie.ui.version>
     <kie.artifacts.deploy.path>/home/docker/kie-artifacts</kie.artifacts.deploy.path>
     <docker.run.timeout>60000</docker.run.timeout>
   </properties>
