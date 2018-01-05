@@ -7,6 +7,6 @@ public class KieDroolsWorkbenchType {
 
     public static final KieImageType INSTANCE =  new KieImageType("jboss-kie/kie-drools-wb", "KIE Drools Workbench", KieImageCategory.KIEAPP, "kie-drools-wb")
             .setSiteContextPath("kie-drools-wb")
-            .setArtifactId("kie-drools-wb-distribution-wars")
+            .setArtifactId("kie-drools-wb")
             .setSupportedCategories(new KieImageCategory[] {KieImageCategory.KIEAPP, KieImageCategory.APPSERVER, KieImageCategory.DBMS}); 
 }
