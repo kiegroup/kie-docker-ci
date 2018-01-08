@@ -6,11 +6,13 @@ import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.ContainerConfig;
+import com.github.dockerjava.api.model.Frame;
 import com.github.dockerjava.api.model.Image;
 import com.github.dockerjava.api.model.Link;
+import com.github.dockerjava.api.model.NetworkSettings;
 import com.github.dockerjava.core.DockerClientBuilder;
+import com.github.dockerjava.core.async.ResultCallbackTemplate;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.kie.dockerui.backend.KieStatusManager;
 import org.kie.dockerui.backend.service.builder.KieDockerArtifactBuilder;
@@ -24,11 +26,12 @@ import org.kie.dockerui.shared.model.KieListCommandResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DockerServiceImpl extends RemoteServiceServlet implements DockerService {
 
@@ -253,8 +256,7 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
 
     @Override
     public String logs(String containerId) {
-        InputStream response = getLogs(containerId);
-        return toString(response);
+        return getLogs(containerId);
     }
 
     @Override
@@ -268,7 +270,7 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
         
         final DockerClient dockerClient = getClient();
         final InspectContainerResponse response = dockerClient.inspectContainerCmd(containerId).exec();
-        final InspectContainerResponse.NetworkSettings networkSettings = response.getNetworkSettings();
+        final NetworkSettings networkSettings = response.getNetworkSettings();
         final ContainerConfig config = response.getConfig();
         final String[] envVars = config.getEnv();
         final InspectContainerResponse.ContainerState state = response.getState();
@@ -309,27 +311,35 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
     }
 
     private DockerClient getClient() {
-        final String url = "http://" + settingsService.getSettings().getPrivateHost() + ":" + settingsService.getSettings().getRestApiPort();
+        final String url = "tcp://" + settingsService.getSettings().getPrivateHost() + ":" + settingsService.getSettings().getRestApiPort();
         return DockerClientBuilder.getInstance(url).build();
     }
     
-    private InputStream getLogs(String containerId) {
+    private String getLogs(String containerId) {
         DockerClient dockerClient = getClient();
-        // TODO: Error stream.
-        InputStream response = dockerClient.logContainerCmd(containerId).withStdOut(true).withStdErr(true).exec();
-        return response;
+        try {
+            final LogContainerResultCallback resultCallback = new LogContainerResultCallback();
+            dockerClient.logContainerCmd(containerId).withStdOut(true).withStdErr(true).withTailAll().exec(resultCallback).awaitCompletion();
+            return resultCallback.getLogs();
+        } catch (InterruptedException ie){
+            LOGGER.error("Error reading containter {} logs", containerId, ie);
+            return null;
+        }
     }
     
-    private String toString(InputStream stream) {
-        try {
-            return IOUtils.toString(stream, "UTF-8");
-        } catch (Exception e) {
-            LOGGER.error("Error reading the input stream.", e);
-        } finally {
-            IOUtils.closeQuietly(stream);
+    public class LogContainerResultCallback extends ResultCallbackTemplate<LogContainerResultCallback, Frame> {
+
+        public List<Frame> frames = new ArrayList<>();
+
+        @Override
+        public void onNext(Frame item) {
+            frames.add(item);
         }
 
-        return null;
+        public String getLogs(){
+            return frames.stream().map(f -> new String(f.getPayload()).trim()).collect(Collectors.joining("\n"));
+        }
+
     }
     
 }

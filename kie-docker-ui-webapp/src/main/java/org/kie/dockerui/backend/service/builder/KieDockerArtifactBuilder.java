@@ -1,6 +1,7 @@
 package org.kie.dockerui.backend.service.builder;
 
 import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.api.model.ContainerPort;
 import com.github.dockerjava.api.model.Image;
 import org.kie.dockerui.backend.KieStatusManager;
 import org.kie.dockerui.backend.service.DockerServiceImpl;
@@ -96,10 +97,10 @@ public class KieDockerArtifactBuilder {
         kieContainer.setTag(_n[2]);
         
         // Ports.
-        final Container.Port[] ports = container.getPorts();
+        final ContainerPort[] ports = container.getPorts();
         if (ports != null) {
             final List<KieContainerPort> kiePorts = new LinkedList<KieContainerPort>();
-            for (final Container.Port port : ports) {
+            for (final ContainerPort port : ports) {
                 final KieContainerPort kiePort = new KieContainerPort();
                 kiePort.setIp(port.getIp());
                 kiePort.setPrivatePort(port.getPrivatePort());
