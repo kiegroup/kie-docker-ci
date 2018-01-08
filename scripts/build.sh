@@ -5,7 +5,7 @@
 # 1.- Restart the Docker daemon (as it sometimes hangs...)
 # 3.- Run the Maven build
 #     3.0.- The Maven build for the module 'kie-docker-ui-app' is disabled by default, unless specifying it with the script argument provided
-#     3.1.- Build all kie images (kie-wb, drools-wb, kie-server, uf-dashbuilder etc) images for both maste and product branches
+#     3.1.- Build all kie images (kie-wb, drools-wb, kie-server, uf-dashbuilder etc) images for both master and product branches
 #     3.2.- Run some of them by default
 #     3.3.- Run kie-docker-ui
 
@@ -92,13 +92,13 @@ KIE_MAVEN_ARGUMENTS=" $KIE_MAVEN_ARGUMENTS -P $KIE_MAVEN_PROFILES"
 # Version for master and product branch artifacts.
 KIE_ARGUMENTS=" -Ddocker.kie.master.version=$KIE_MASTER_VERSION -Ddocker.kie.product.version=$KIE_PRODUCT_VERSION -Ddocker.dashbuilder.master.version=$DASH_MASTER_VERSION "
 
-# Private host argument (for running KIE Docker UI Docker oontainer)
+# Private host argument (for running KIE Docker UI Docker container)
 if [[ -z "$KIE_HOST_PRIVATE" ]] ; then
     echo "No private host argument specified. Exiting.."
     exit 65
 fi
 
-# Public host argument (for running KIE Docker UI Docker oontainer)
+# Public host argument (for running KIE Docker UI Docker container)
 if [[ -z "$KIE_HOST_PUBLIC" ]] ; then
     echo "No public host argument specified. Exiting.."
     exit 65
