@@ -72,8 +72,8 @@
                   <tag>${docker.kie.ui.version}-${timestamp}</tag>
                   <tag>latest</tag>
                 </tags>
+                <dockerFileDir>${project.basedir}/src/main/docker/kie-docker-ui</dockerFileDir>
                 <assembly>
-                  <dockerFileDir>${project.basedir}/src/main/docker/kie-docker-ui</dockerFileDir>
                   <descriptor>${project.basedir}/src/main/assembly/assembly-kie-docker-ui-wildfly10.xml</descriptor>
                 </assembly>
               </build>
