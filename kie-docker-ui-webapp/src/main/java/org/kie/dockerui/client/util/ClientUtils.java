@@ -108,6 +108,8 @@ public class ClientUtils {
 
         if (KieWorkbenchType.INSTANCE.equals(containerType)) {
             return Images.INSTANCE.kieIde().getSafeUri();
+        } else if (BusinessCentralType.INSTANCE.equals(containerType)) {
+            return Images.INSTANCE.kieIde().getSafeUri();
         } else if (KieDroolsWorkbenchType.INSTANCE.equals(containerType)) {
             return Images.INSTANCE.drools().getSafeUri();
         } else if (KieServerType.INSTANCE.equals(containerType)) {

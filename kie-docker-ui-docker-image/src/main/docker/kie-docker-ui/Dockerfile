@@ -1,8 +1,8 @@
 ####### BASE ############
-FROM jboss/wildfly:10.1.0.Final
+FROM jboss/wildfly:14.0.1.Final
 
 ####### MAINTAINER ############
-MAINTAINER "Petr Široký" "psiroky@redhat.com"
+MAINTAINER "Michael Biarnés Kiefer" "mbiarnes@redhat.com"
 
 ####### ENVIRONMENT ############
 ENV JAVA_OPTS -Xmx1g -Djava.security.egd=file:/dev/urandom

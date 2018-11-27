@@ -10,20 +10,9 @@ import java.util.List;
 
 public class KieImageTypeManager {
 
-    static final KieImageType[] KIE_APP_TYPES = new KieImageType[] {
-            KieWorkbenchType.INSTANCE, KieDroolsWorkbenchType.INSTANCE, KieServerType.INSTANCE, UfDashbuilderType.INSTANCE
-    };
 
-    static final KieImageType[] APP_SERVER_TYPES = new KieImageType[] {
-            WildflyType.INSTANCE, EAPType.INSTANCE, TomcatType.INSTANCE
-    };
-
-    static final KieImageType[] DBMS_TYPES = new KieImageType[] {
-            H2Type.INSTANCE, MySQLType.INSTANCE, PostgreSQLType.INSTANCE
-    };
-    
     static final KieImageType[] ALL_TYPES = new KieImageType[] {
-            KieWorkbenchType.INSTANCE, KieDroolsWorkbenchType.INSTANCE, KieServerType.INSTANCE, UfDashbuilderType.INSTANCE,
+            KieWorkbenchType.INSTANCE, BusinessCentralType.INSTANCE, KieDroolsWorkbenchType.INSTANCE, KieServerType.INSTANCE, UfDashbuilderType.INSTANCE,
             WildflyType.INSTANCE, EAPType.INSTANCE, TomcatType.INSTANCE,
             H2Type.INSTANCE, MySQLType.INSTANCE, PostgreSQLType.INSTANCE,
             OthersType.INSTANCE

@@ -60,14 +60,16 @@ public class KieAppStep extends AbstractStep {
 
         if (kieAppTypeId.equals(KieWorkbenchType.INSTANCE.getId())) {
             return 0;
-        } else if (kieAppTypeId.equals(KieDroolsWorkbenchType.INSTANCE.getId())) {
+        } else if (kieAppTypeId.equals(BusinessCentralType.INSTANCE.getId())) {
             return 1;
-        } else if (kieAppTypeId.equals(KieServerType.INSTANCE.getId())) {
+        } else if (kieAppTypeId.equals(KieDroolsWorkbenchType.INSTANCE.getId())) {
             return 2;
-        } else if (kieAppTypeId.equals(UfDashbuilderType.INSTANCE.getId())) {
+        } else if (kieAppTypeId.equals(KieServerType.INSTANCE.getId())) {
             return 3;
-        } else if (kieAppTypeId.equals(OthersType.INSTANCE.getId())) {
+        } else if (kieAppTypeId.equals(UfDashbuilderType.INSTANCE.getId())) {
             return 4;
+        } else if (kieAppTypeId.equals(OthersType.INSTANCE.getId())) {
+            return 5;
         }
 
         return -1;
