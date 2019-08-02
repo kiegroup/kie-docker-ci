@@ -29,7 +29,8 @@
     <version.org.mortbay.jetty>6.1.25</version.org.mortbay.jetty>
     <version.mysql>5.1.35</version.mysql>
     <version.postgresql>9.1-901-1.jdbc4</version.postgresql>
-    <version.com.fasterxml.jackson.core>2.7.2</version.com.fasterxml.jackson.core>
+    <version.com.fasterxml.jackson.core>2.9.9</version.com.fasterxml.jackson.core>
+    <version.com.fasterxml.jackson.databind>2.9.9.3</version.com.fasterxml.jackson.databind>
     <version.com.fasterxml.jackson.module>2.1.2</version.com.fasterxml.jackson.module>
   </properties>
 
@@ -158,7 +159,7 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>${version.com.fasterxml.jackson.core}</version>
+        <version>${version.com.fasterxml.jackson.databind}</version>
         <type>jar</type>
       </dependency>
 
