@@ -30,7 +30,7 @@
     <version.mysql>5.1.35</version.mysql>
     <version.postgresql>9.1-901-1.jdbc4</version.postgresql>
     <version.com.fasterxml.jackson.core>2.9.9</version.com.fasterxml.jackson.core>
-    <version.com.fasterxml.jackson.databind>2.9.10.1</version.com.fasterxml.jackson.databind>
+    <version.com.fasterxml.jackson.databind>2.9.10.3</version.com.fasterxml.jackson.databind>
     <version.com.fasterxml.jackson.module>2.1.2</version.com.fasterxml.jackson.module>
   </properties>
 
