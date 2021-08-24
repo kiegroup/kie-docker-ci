@@ -9,7 +9,7 @@
     <dependencySet>
       <useTransitiveDependencies>true</useTransitiveDependencies>
       <includes>
-        <include>org.kie.docker:kie-docker-ui-webapp:war:wildfly14</include>
+        <include>org.kie.docker:kie-docker-ui-webapp:war:wildfly23</include>
       </includes>
       <outputDirectory>.</outputDirectory>
       <outputFileNameMapping>kie-docker-ui-webapp.war</outputFileNameMapping>

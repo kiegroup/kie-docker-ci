@@ -35,7 +35,7 @@
       <groupId>org.kie.docker</groupId>
       <artifactId>kie-docker-ui-webapp</artifactId>
       <type>war</type>
-      <classifier>wildfly14</classifier>
+      <classifier>wildfly23</classifier>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -74,7 +74,7 @@
                 </tags>
                 <dockerFileDir>${project.basedir}/src/main/docker/kie-docker-ui</dockerFileDir>
                 <assembly>
-                  <descriptor>${project.basedir}/src/main/assembly/assembly-kie-docker-ui-wildfly14.xml</descriptor>
+                  <descriptor>${project.basedir}/src/main/assembly/assembly-kie-docker-ui-wildfly23.xml</descriptor>
                 </assembly>
               </build>
               <run>

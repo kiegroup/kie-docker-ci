@@ -157,7 +157,7 @@
         </executions>
         <configuration>
           <descriptors>
-            <descriptor>${project.basedir}/src/main/assembly/assembly-wildfly14.xml</descriptor>
+            <descriptor>${project.basedir}/src/main/assembly/assembly-wildfly23.xml</descriptor>
           </descriptors>
           <archive>
             <addMavenDescriptor>true</addMavenDescriptor>
@@ -171,7 +171,7 @@
         <version>1.5.0</version>
         <configuration>
           <container>
-            <containerId>wildfly10x</containerId>
+            <containerId>wildfly23x</containerId>
             <type>installed</type>
             <artifactInstaller>
               <groupId>org.wildfly</groupId>
@@ -189,7 +189,7 @@
             <deployable>
               <groupId>${project.groupId}</groupId>
               <artifactId>kie-docker-ui-webapp</artifactId>
-              <classifier>wildfly14</classifier>
+              <classifier>wildfly23</classifier>
               <type>war</type>
               <properties>
                 <context>kie-docker-ui-webapp</context>
