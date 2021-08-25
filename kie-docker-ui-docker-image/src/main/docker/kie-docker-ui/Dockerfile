@@ -1,5 +1,5 @@
 ####### BASE ############
-FROM jboss/wildfly:14.0.1.Final
+FROM jboss/wildfly:23.0.2.Final
 
 ####### MAINTAINER ############
 MAINTAINER "Michael Biarnés Kiefer" "mbiarnes@redhat.com"

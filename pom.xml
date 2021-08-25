@@ -18,7 +18,7 @@
     <!-- Java 8 required by WildFly 10 -->
     <jdk.min.version>1.8</jdk.min.version>
 
-    <version.org.wildfly>14.0.1.Final</version.org.wildfly>
+    <version.org.wildfly>23.0.2.Final</version.org.wildfly>
     <version.org.slf4j>1.7.2</version.org.slf4j>
     <version.com.github.docker-java>3.0.14</version.com.github.docker-java>
     <version.com.allen-sauer.gwt.dnd>3.3.4</version.com.allen-sauer.gwt.dnd>
@@ -64,7 +64,7 @@
         <artifactId>kie-docker-ui-webapp</artifactId>
         <version>${project.version}</version>
         <type>war</type>
-        <classifier>wildfly14</classifier>
+        <classifier>wildfly23</classifier>
       </dependency>
 
       <dependency>
