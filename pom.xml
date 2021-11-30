@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>19</version>
+    <version>39</version>
   </parent>
 
   <groupId>org.kie.docker</groupId>
@@ -19,19 +19,19 @@
     <jdk.min.version>1.8</jdk.min.version>
 
     <version.org.wildfly>23.0.2.Final</version.org.wildfly>
-    <version.org.slf4j>1.7.2</version.org.slf4j>
-    <version.com.github.docker-java>3.0.14</version.com.github.docker-java>
+    <version.org.slf4j>1.7.30</version.org.slf4j>
+    <version.com.github.docker-java>3.1.0</version.com.github.docker-java>
     <version.com.allen-sauer.gwt.dnd>3.3.4</version.com.allen-sauer.gwt.dnd>
     <version.com.bradrydzewski.gwt_cal>0.9.3.1</version.com.bradrydzewski.gwt_cal>
     <version.org.commons.io>2.7</version.org.commons.io>
-    <version.com.google.gwt>2.7.0</version.com.google.gwt>
-    <version.com.github.gwtbootstrap>2.2.1.0</version.com.github.gwtbootstrap>
-    <version.org.mortbay.jetty>6.1.25</version.org.mortbay.jetty>
+    <version.com.google.gwt>2.9.0</version.com.google.gwt>
+    <version.com.github.gwtbootstrap>2.3.2.0</version.com.github.gwtbootstrap>
+    <version.org.mortbay.jetty>6.1.26</version.org.mortbay.jetty>
     <version.mysql>8.0.16</version.mysql>
-    <version.postgresql>9.1-901-1.jdbc4</version.postgresql>
-    <version.com.fasterxml.jackson.core>2.9.9</version.com.fasterxml.jackson.core>
-    <version.com.fasterxml.jackson.databind>2.9.10.7</version.com.fasterxml.jackson.databind>
-    <version.com.fasterxml.jackson.module>2.1.2</version.com.fasterxml.jackson.module>
+    <version.org.postgresql>42.2.14</version.org.postgresql>
+    <version.com.fasterxml.jackson.core>2.12.1</version.com.fasterxml.jackson.core>
+    <version.com.fasterxml.jackson.databind>${version.com.fasterxml.jackson.core}</version.com.fasterxml.jackson.databind>
+    <version.com.fasterxml.jackson.module>${version.com.fasterxml.jackson.core}</version.com.fasterxml.jackson.module>
   </properties>
 
   <!-- Bootstrap repository to locate the parent pom when the parent pom has not been build locally. -->
@@ -143,9 +143,9 @@
       </dependency>
 
       <dependency>
-        <groupId>postgresql</groupId>
+        <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
-        <version>${version.postgresql}</version>
+        <version>${version.org.postgresql}</version>
         <type>jar</type>
       </dependency>
 
@@ -194,7 +194,7 @@
         <plugin>
           <groupId>io.fabric8</groupId>
           <artifactId>docker-maven-plugin</artifactId>
-          <version>0.20.1</version>
+          <version>0.38.0</version>
         </plugin>
       </plugins>
     </pluginManagement>

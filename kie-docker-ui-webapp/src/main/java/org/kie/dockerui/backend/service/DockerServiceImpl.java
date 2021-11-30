@@ -205,18 +205,18 @@ public class DockerServiceImpl extends RemoteServiceServlet implements DockerSer
             LOGGER.error("Container's image name to create is empty");
             return null;
         }
-        
+
         final CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd(image)
-                .withPublishAllPorts(true)
                 .withAttachStdout(true)
                 .withAttachStdin(true)
                 .withAttachStdin(true)
                 .withTty(true);
+        createContainerCmd.getHostConfig().withPublishAllPorts(true);
         if (linking != null) {
             final String linkName = linking[0];
             final String linkAlias = linking[1];
             final Link link = new Link(linkName, linkAlias);
-            createContainerCmd.withLinks(link);
+            createContainerCmd.getHostConfig().withLinks(link);
         }
         if (name != null && name.trim().length() > 0) createContainerCmd.withName(name);
         if (env != null && env.length > 0) createContainerCmd.withEnv(env);

@@ -1,19 +1,12 @@
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
 
   <id>docker-image-resources</id>
-  <dependencySets>
-
-    <!-- The KIE Docker UI WAR artifact. -->
-    <dependencySet>
-      <useTransitiveDependencies>true</useTransitiveDependencies>
-      <includes>
-        <include>org.kie.docker:kie-docker-ui-webapp:war:wildfly23</include>
-      </includes>
+  <files>
+    <file>
+      <source>${project.build.directory}/${kie-docker-ui-webapp.dir}/${kie-docker-ui-webapp.name}</source>
       <outputDirectory>.</outputDirectory>
-      <outputFileNameMapping>kie-docker-ui-webapp.war</outputFileNameMapping>
-    </dependencySet>
-  </dependencySets>
-
+    </file>
+  </files>
 </assembly>
