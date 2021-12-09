@@ -27,7 +27,6 @@
 
     <dependencies>
       <module name="org.slf4j"/>
-      <module name="org.slf4j.ext"/>
     </dependencies>
   </deployment>
 </jboss-deployment-structure>

@@ -27,6 +27,9 @@
     <docker.kie.ui.version>1.0.2</docker.kie.ui.version>
     <kie.artifacts.deploy.path>/home/docker/kie-artifacts</kie.artifacts.deploy.path>
     <docker.run.timeout>60000</docker.run.timeout>
+
+    <kie-docker-ui-webapp.dir>kie-docker-ui-webapp</kie-docker-ui-webapp.dir>
+    <kie-docker-ui-webapp.name>kie-docker-ui-webapp.war</kie-docker-ui-webapp.name>
   </properties>
 
   <dependencies>
@@ -47,7 +50,32 @@
 
   <build>
     <plugins>
-
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.kie.docker</groupId>
+                  <artifactId>kie-docker-ui-webapp</artifactId>
+                  <version>${project.version}</version>
+                  <classifier>wildfly23</classifier>
+                  <type>war</type>
+                  <outputDirectory>${project.build.directory}/${kie-docker-ui-webapp.dir}</outputDirectory>
+                  <destFileName>${kie-docker-ui-webapp.name}</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>io.fabric8</groupId>
         <artifactId>docker-maven-plugin</artifactId>
