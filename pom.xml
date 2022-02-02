@@ -28,7 +28,7 @@
     <version.com.github.gwtbootstrap>2.3.2.0</version.com.github.gwtbootstrap>
     <version.org.mortbay.jetty>6.1.26</version.org.mortbay.jetty>
     <version.mysql>8.0.16</version.mysql>
-    <version.org.postgresql>42.2.14</version.org.postgresql>
+    <version.org.postgresql>42.2.25</version.org.postgresql>
     <version.com.fasterxml.jackson.core>2.12.1</version.com.fasterxml.jackson.core>
     <version.com.fasterxml.jackson.databind>${version.com.fasterxml.jackson.core}</version.com.fasterxml.jackson.databind>
     <version.com.fasterxml.jackson.module>${version.com.fasterxml.jackson.core}</version.com.fasterxml.jackson.module>
